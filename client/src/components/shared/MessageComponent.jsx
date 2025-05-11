@@ -1,0 +1,49 @@
+import React from "react";
+import { Box, Typography } from "@mui/material";
+import { lightBlueColor } from "../../constants/color";
+import moment from "moment";
+import { fileFormat } from "../../lib/features";
+import RenderAttachment from "./RenderAttachment";
+const MessageComponent = ({ message, user }) => {
+  const { content, attachments = [], sender, createdAt } = message;
+  const sameSender = user._id === sender._id;
+  const timeAgo = moment(createdAt).fromNow();
+  return (
+    <div
+      style={{
+        alignSelf: sameSender ? "flex-end" : "flex-start",
+        backgroundColor: "white",
+        color: "black",
+        borderRadius: "5px",
+        padding: "0.5rem",
+        width: "fit-content",
+      }}
+    >
+      <Typography color={lightBlueColor} fontWeight={"600"} variant="caption">
+        {sameSender ? "You" : sender.name}
+      </Typography>
+
+      {content && <Typography>{content}</Typography>}
+      {attachments.length > 0 &&
+        attachments.map((attachment, index) => {
+          const url = attachment.url;
+          const file = fileFormat(url);
+          return (
+            <Box key={index}>
+              <a
+                href={url}
+                target="_blank"
+                download
+                style={{ color: "black" }}
+              >{RenderAttachment(file,url)}</a>
+            </Box>
+          );
+        })}
+      <Typography variant="caption" color="text.secondary">
+        {timeAgo}
+      </Typography>
+    </div>
+  );
+};
+
+export default MessageComponent;
