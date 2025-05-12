@@ -9,20 +9,38 @@ const Login = lazy(() => import("./pages/Login"));
 const Chat = lazy(() => import("./pages/Chat"));
 const Group = lazy(() => import("./pages/Group"));
 const NotFound = lazy(() => import("./pages/NotFound"));
-
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const DashBoard = lazy(() => import("./pages/admin/DashBoard"));
+const UserManagement = lazy(() => import("./pages/admin/UserManagement"));
+const ChatManagement = lazy(() => import("./pages/admin/ChatManagement"));
+const MessagesManagement = lazy(() =>
+  import("./pages/admin/MessageManagement")
+);
 const user = true;
 
 const App = () => {
   return (
     <Router>
-      <Suspense fallback={<LayoutLoader/>}>
+      <Suspense fallback={<LayoutLoader />}>
         <Routes>
           <Route element={<ProtectRoute user={user} />}>
             <Route path="/" element={<Home />} />
             <Route path="/chat/:chatId" element={<Chat />} />
             <Route path="/groups" element={<Group />} />
           </Route>
-          <Route path="/login" element={user ? <Home /> : <Login />} />
+          <Route
+            path="/login"
+            element={
+              <ProtectRoute user={!user} redirect="/">
+                <Login />
+              </ProtectRoute>
+            }
+          />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<DashBoard />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/chats" element={<ChatManagement />} />
+          <Route path="/admin/messages" element={<MessagesManagement />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>

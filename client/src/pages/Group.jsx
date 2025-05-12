@@ -18,15 +18,23 @@ import {
   Done as DoneIcon,
   Edit as EditIcon,
   Menu as MenuIcon,
+  Add,
 } from "@mui/icons-material";
 import { KeyboardBackspace as KeyboardBackspaceIcon } from "@mui/icons-material";
 import { Link } from "../components/styles/StyledComponents";
 import AvatarCard from "../components/shared/AvatarCard.jsx";
+import UserItem from "../components/shared/UserItem.jsx";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { samplechats } from "../constants/sampleData.js";
+import { samplechats, sampleusers } from "../constants/sampleData.js";
 const ConfirmLeaveDialog = React.lazy(() =>
   import("../components/dialogs/ConfirmLeaveDialog.jsx")
 );
+const AddMemberDialog = React.lazy(() =>
+  import("../components/dialogs/AddMemberDialog.jsx")
+);
+
+
+const isAddMember=false; //temp
 
 const Group = () => {
   const chatId = useSearchParams()[0].get("group");
@@ -49,14 +57,19 @@ const Group = () => {
   const openConfirmLeave = () => setConfirmLeaveDialog(true);
   const closeConfirmLeave = () => setConfirmLeaveDialog(false);
   const handleAddMembers = () => {};
+  const removeMemberHandler = (id) => {
+    console.log("remove member", id);
+  }
   const LeaveGroupHandler = () => {
     setConfirmLeaveDialog(false);
     console.log("Leave group");};
   //-----------------------------------------
 
   useEffect(() => {
-    setGroupName(`Group Name ${chatId}`); //temp;
-    setUpdateGroupName(`Group Name ${chatId}`); //temp;
+    if(chatId){
+      setGroupName(`Group Name ${chatId}`); //temp;
+      setUpdateGroupName(`Group Name ${chatId}`); //temp;
+    }
 
     // When we switch the group the values should be reset
     return () => {
@@ -170,7 +183,6 @@ const Group = () => {
         item
         sm={4}
         sx={{ display: { xs: "none", sm: "block" } }}
-        bgcolor="bisque"
       >
         <GroupList myGroups={samplechats} chatId={chatId} />
       </Grid>
@@ -207,16 +219,36 @@ const Group = () => {
                 md: "1rem 4rem",
               }}
               spacing={"2rem"}
-              bgcolor={"beige"}
               height={"50vh"}
               overflow={"auto"}
             >
               {/* Members  */}
+              {
+                sampleusers.map((i) => (
+                   <UserItem
+                    user={i}
+                    key={i._id}
+                    isAdded={true}
+                    styling={{
+                      boxShadow: "0 0 0.5rem  rgba(0,0,0,0.2)",
+                      padding: "1rem 2rem",
+                      borderRadius: "1rem",
+                    }}
+                    handler={removeMemberHandler}
+                  />
+                ))
+              }
             </Stack>
             {ButtonGroup}
           </>
         )}
       </Grid>
+      {isAddMember && (
+        <Suspense fallback={<Backdrop open />}>
+          <AddMemberDialog/>
+        </Suspense>
+      )}
+      {/* Confirm Leave Dialog */}
       {confirmLeaveDialog && (
         <Suspense fallback={<Backdrop open/>}>
           <ConfirmLeaveDialog
@@ -244,7 +276,12 @@ const Group = () => {
 
 const GroupList = ({ w = "100%", myGroups = [], chatId }) => {
   return (
-    <Stack width={w} padding="1rem">
+    <Stack width={w} sx={{
+      backgroundColor:"bisque",
+      height: "100vh",
+      overflow: "auto",
+      padding: "1rem",
+    }}>
       {myGroups.length > 0 ? (
         myGroups.map((group) => (
           <GroupsListItem key={group._id} group={group} chatId={chatId} />

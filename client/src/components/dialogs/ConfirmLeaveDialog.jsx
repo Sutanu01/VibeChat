@@ -1,11 +1,10 @@
-import React from "react";
 import {
+  Button,
   Dialog,
   DialogActions,
   DialogContent,
-  DialogTitle,
-  Button,
   DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 const ConfirmLeaveDialog = ({ open, handleClose, deleteHandler }) => {
   return (

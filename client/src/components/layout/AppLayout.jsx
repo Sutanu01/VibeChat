@@ -1,11 +1,10 @@
-import React from "react";
-import Header from "./Header";
-import Title from "../shared/Title";
 import { Grid } from "@mui/material";
-import Chatlist from "../specific/Chatlist";
-import { samplechats } from "../../constants/sampleData";
 import { useParams } from "react-router-dom";
+import { samplechats } from "../../constants/sampleData";
+import Title from "../shared/Title";
+import Chatlist from "../specific/Chatlist";
 import Profile from "../specific/Profile";
+import Header from "./Header";
 const AppLayout = () => (WrappedComponent) => {
   return (props) => {
     const params = useParams();
