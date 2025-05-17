@@ -6,9 +6,13 @@ import { cookieOptions, emitEvent, sendToken } from "../utils/features.js";
 import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/event.js";
+import { getOtherMember } from "../lib/helper.js";
 
-const newUser = TryCatch(async (req, res, next) => {
+const newUser = TryCatch(async (req, res,next) => {
   const { name, username, password, bio } = req.body;
+  const file = req.file
+  if(!file)return next(new ErrorHandler("Please upload Avatar", 400));
+  
   const avatar = {
     public_id: "xyz",
     url: "xyz",
@@ -36,9 +40,10 @@ const Login = TryCatch(async (req, res, next) => {
   sendToken(res, user, 200, `Welcome back ${user.name}`);
 });
 
-const getMyProfile = TryCatch(async (req, res) => {
+const getMyProfile = TryCatch(async (req, res, next) => {
   const user = await User.findById(req.user);
-  req.status(200).json({
+  if (!user) return next(new ErrorHandler("User not found", 404));
+  res.status(200).json({
     success: true,
     user,
   });
@@ -47,7 +52,7 @@ const getMyProfile = TryCatch(async (req, res) => {
 const logout = TryCatch(async (req, res) => {
   return res
     .status(200)
-    .cookie("yapyap-token", "", { ...cookieOptions, maxAge: 0 })
+    .cookie("vibechat-token", "", { ...cookieOptions, maxAge: 0 })
     .json({
       success: true,
       message: "Logged out successfully",
@@ -98,22 +103,23 @@ const sendFriendRequest = TryCatch(async (req, res, next) => {
   });
 });
 
-const acceptFriendRequest = TryCatch(async (req, res) => {
+const acceptFriendRequest = TryCatch(async (req, res, next) => {
   const { requestId, accept } = req.body;
 
   const request = await Request.findById(requestId)
     .populate("sender", "name")
     .populate("receiver", "name");
 
-
-  if(!request) {
+  if (!request) {
     return next(new ErrorHandler("Request not found", 404));
   }
 
-  if(request.receiver.toString() !== req.user.toString()) {
-    return next(new ErrorHandler("You are not authorized to accept this request", 401));
+  if (request.receiver._id.toString() !== req.user.toString()) {
+    return next(
+      new ErrorHandler("You are not authorized to accept this request", 401)
+    );
   }
-  if(!accept) {
+  if (!accept) {
     await request.deleteOne();
 
     return res.status(200).json({
@@ -122,7 +128,7 @@ const acceptFriendRequest = TryCatch(async (req, res) => {
     });
   }
 
-  const members=[request.sender, request.receiver];
+  const members = [request.sender, request.receiver];
   await Promise.all([
     Chat.create({
       members,
@@ -140,6 +146,59 @@ const acceptFriendRequest = TryCatch(async (req, res) => {
   });
 });
 
+const getMyNotifications = TryCatch(async (req, res) => {
+  const requests = await Request.find({ receiver: req.user }).populate(
+    "sender",
+    "name avatar"
+  );
+  const allRequests = requests.map(({ _id, sender }) => ({
+    _id,
+    sender: {
+      _id: sender._id,
+      name: sender.name,
+      avatar: sender.avatar.url,
+    },
+  }));
+  return res.status(200).json({
+    success: true,
+    allRequests,
+  });
+});
+
+const getMyFriends = TryCatch(async (req, res, next) => {
+  const chatId = req.query.chatId;
+
+  const chats = await Chat.find({
+    members: req.user,
+    groupChat: false,
+  }).populate("members", "name avatar");
+
+  const friends = chats.map(({ members }) => {
+    const otherMember = getOtherMember(members, req.user);
+    return {
+      _id: otherMember._id,
+      name: otherMember.name,
+      avatar: otherMember.avatar.url,
+    };
+  });
+  if (chatId) {
+    const chat = await Chat.findById(chatId);
+    if (!chat) return next(new ErrorHandler("Chat not found", 404));
+    const availableFriends = friends.filter(
+      (friend) => !chat.members.includes(friend._id)
+    );
+    return res.status(200).json({
+      success: true,
+      friends: availableFriends,
+    });
+  } else {
+    return res.status(200).json({
+      success: true,
+      friends,
+    });
+  }
+});
+
 export {
   Login,
   newUser,
@@ -148,4 +207,6 @@ export {
   searchUser,
   sendFriendRequest,
   acceptFriendRequest,
+  getMyNotifications,
+  getMyFriends,
 };

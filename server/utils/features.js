@@ -11,7 +11,7 @@ const cookieOptions = {
 const connectToMongo = (uri) => {
   mongoose
     .connect(uri, {
-      dbName: "YapYap",
+      dbName: "VibeChat",
     })
     .then((data) => {
       console.log(`Connected to MongoDB ${data.connection.host}`);
@@ -28,7 +28,7 @@ const sendToken = (res, user, code, message) => {
     },
     process.env.JWT_SECRET
   );
-  return res.status(code).cookie("yapyap-token", token, cookieOptions).json({
+  return res.status(code).cookie("vibechat-token", token, cookieOptions).json({
     success: true,
     token,
     message,

@@ -6,6 +6,8 @@ import {
   searchUser,
   sendFriendRequest,
   acceptFriendRequest,
+  getMyNotifications,
+  getMyFriends,
 } from "../controllers/user.js";
 import { singleAvatar } from "../middlewares/multer.js";
 import { isAuthenticated } from "../middlewares/auth.js";
@@ -39,4 +41,12 @@ Router.put(
   validateHandler,
   acceptFriendRequest
 );
+
+Router.get("/notifications",getMyNotifications)
+
+Router.get("/friends",getMyFriends)
+
+
+
+
 export default Router;

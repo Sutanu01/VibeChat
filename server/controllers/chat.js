@@ -192,16 +192,19 @@ const leaveGroup = TryCatch(async (req, res, next) => {
 
 const sendAttachments = TryCatch(async (req, res, next) => {
   const { chatId } = req.body;
+  const files = req.files || [];
+
   const chat = await Chat.findById(chatId);
   const me = await User.findById(req.user, "name");
   if (!chat) {
     return next(new ErrorHandler("Chat not found", 404));
   }
-  const files = req.files || [];
   if (files.length < 1) {
     return next(new ErrorHandler("Please upload a file", 400));
   }
-
+  if(files.length > 5){
+    return next(new ErrorHandler("You can upload upto 5 files", 400));
+  }
   //Uplaod files to cloudinary
   const attachments = [];
 
