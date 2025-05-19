@@ -2,20 +2,23 @@ import { User } from "../models/User.js";
 import { Chat } from "../models/Chat.js";
 import { Request } from "../models/request.js";
 import { compare } from "bcrypt";
-import { cookieOptions, emitEvent, sendToken } from "../utils/features.js";
+import { cookieOptions, emitEvent, sendToken,uploadFilesToCloudinary } from "../utils/features.js";
 import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
 import { NEW_REQUEST, REFETCH_CHATS } from "../constants/event.js";
 import { getOtherMember } from "../lib/helper.js";
 
 const newUser = TryCatch(async (req, res,next) => {
+  console.log(req.body)
   const { name, username, password, bio } = req.body;
   const file = req.file
   if(!file)return next(new ErrorHandler("Please upload Avatar", 400));
   
+
+  const result= await uploadFilesToCloudinary([file]);
   const avatar = {
-    public_id: "xyz",
-    url: "xyz",
+    public_id: result[0].public_id,
+    url: result[0].url,
   };
   const user = await User.create({
     name,
@@ -49,7 +52,7 @@ const getMyProfile = TryCatch(async (req, res, next) => {
   });
 });
 
-const logout = TryCatch(async (req, res) => {
+const Logout = TryCatch(async (req, res) => {
   return res
     .status(200)
     .cookie("vibechat-token", "", { ...cookieOptions, maxAge: 0 })
@@ -203,7 +206,7 @@ export {
   Login,
   newUser,
   getMyProfile,
-  logout,
+  Logout,
   searchUser,
   sendFriendRequest,
   acceptFriendRequest,

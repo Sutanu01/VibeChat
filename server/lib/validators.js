@@ -14,12 +14,12 @@ const registerValidator = () => [
   body("name", "Please enter name").notEmpty(),
   body("username", "Please enter Username").notEmpty(),
   body("bio", "Please enter Bio").notEmpty(),
-  body("passsword", "Please enter Passsword").notEmpty(),
+  body("password", "Please enter password").notEmpty(),
 ];
 
 const LoginValidator = () => [
   body("username", "Please enter Username").notEmpty(),
-  body("passsword", "Please enter Passsword").notEmpty(),
+  body("password", "Please enter password").notEmpty(),
 ];
 
 const newGroupValidator = () => [
