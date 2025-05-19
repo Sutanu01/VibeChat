@@ -6,7 +6,8 @@ import axios from "axios";
 import { server } from "./constants/config";
 import { useDispatch, useSelector } from "react-redux";
 import { userExists, userNotExists } from "./redux/reducers/auth";
-import {Toaster} from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
+import { SocketProvider } from "./socket";
 // Dinamic Routing using Lazy Loading
 const Home = lazy(() => import("./pages/Home"));
 const Login = lazy(() => import("./pages/Login"));
@@ -38,7 +39,13 @@ const App = () => {
     <Router>
       <Suspense fallback={<LayoutLoader />}>
         <Routes>
-          <Route element={<ProtectRoute user={user} />}>
+          <Route
+            element={
+              <SocketProvider>
+                <ProtectRoute user={user} />
+              </SocketProvider>
+            }
+          >
             <Route path="/" element={<Home />} />
             <Route path="/chat/:chatId" element={<Chat />} />
             <Route path="/groups" element={<Group />} />
@@ -59,7 +66,7 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
-      <Toaster position="bottom-center"/>
+      <Toaster position="bottom-center" />
     </Router>
   );
 };

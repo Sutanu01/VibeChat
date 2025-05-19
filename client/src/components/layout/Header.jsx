@@ -20,9 +20,14 @@ import {
   Logout as LogoutIcon,
   Notifications as NotificationIcon,
 } from "@mui/icons-material";
-import { useDispatch,useSelector } from "react-redux";
-import {userNotExists} from "../../redux/reducers/auth"
+import { useDispatch, useSelector } from "react-redux";
+import { userNotExists } from "../../redux/reducers/auth";
 import { useNavigate } from "react-router-dom";
+import {
+  setIsMobile,
+  setIsNotification,
+  setIsSearch,
+} from "../../redux/reducers/misc";
 const SearchDialog = lazy(() => import("../specific/Search"));
 const NewGroupDialog = lazy(() => import("../specific/NewGroup"));
 const NotificationDialog = lazy(() => import("../specific/Notification"));
@@ -30,23 +35,19 @@ const NotificationDialog = lazy(() => import("../specific/Notification"));
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [mobile, setMobile] = useState(false);
-  const [IsSearch, setIsSearch] = useState(false);
-  const [isNewGroup, setisNewGroup] = useState(false);
-  const [isNotification, setisNotification] = useState(false);
 
-  const handleMobile = () => {
-    setMobile(!mobile);
-  };
-  const openSearch = () => {
-    setIsSearch(!IsSearch);
-  };
+  const { isSearch, isNotification } = useSelector((state) => state.misc);
+
+  const [isNewGroup, setisNewGroup] = useState(false);
+
+  const handleMobile = () => dispatch(setIsMobile(true));
+  const openSearch = () => dispatch(setIsSearch(true));
+  const openNotification = () => dispatch(setIsNotification(true));
+
   const openNewGroup = () => {
     setisNewGroup(!isNewGroup);
   };
-  const openNotification = () => {
-    setisNotification(!isNotification);
-  };
+
   const navigateToGroup = () => {
     navigate("/groups");
   };
@@ -58,7 +59,7 @@ const Header = () => {
       dispatch(userNotExists());
       toast.success(data.message);
     } catch (error) {
-       toast.error(error?.response?.data?.message || "Logout failed");
+      toast.error(error?.response?.data?.message || "Logout failed");
     }
   };
 
@@ -109,7 +110,7 @@ const Header = () => {
           </Toolbar>
         </AppBar>
       </Box>
-      {IsSearch && (
+      {isSearch && (
         <Suspense fallback={<Backdrop open />}>
           <SearchDialog />
         </Suspense>
