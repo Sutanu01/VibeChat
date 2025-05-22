@@ -9,7 +9,14 @@ import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/StyledComponents";
 import { greyColor, orange } from "../constants/color";
-import { ALERT, NEW_MESSAGE, START_TYPING, STOP_TYPING } from "../constants/event.js";
+import {
+  ALERT,
+  CHAT_JOINED,
+  CHAT_LEAVED,
+  NEW_MESSAGE,
+  START_TYPING,
+  STOP_TYPING,
+} from "../constants/event.js";
 import { useErrors, useSocketEvents } from "../hooks/hook.jsx";
 import { useChatDetailsQuery, useGetMessagesQuery } from "../redux/api/api.js";
 import { getSocket } from "../socket";
@@ -18,12 +25,12 @@ import { useDispatch } from "react-redux";
 import { setIsFileMenu } from "../redux/reducers/misc.js";
 import { removeNewMessagesAlert } from "../redux/reducers/chat.js";
 import { TypingLoader } from "../components/layout/Loaders.jsx";
+import { useNavigate } from "react-router-dom";
 
 const Chat = ({ chatId, user }) => {
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
-
-
+  const navigate = useNavigate();
   const socket = getSocket();
   const dispatch = useDispatch();
   const [message, setMessage] = useState("");
@@ -66,7 +73,7 @@ const Chat = ({ chatId, user }) => {
       socket.emit(START_TYPING, { members, chatId });
       setTyping(true);
     }
-    
+
     if (typingTimeout.current) {
       clearTimeout(typingTimeout.current);
     }
@@ -115,45 +122,50 @@ const Chat = ({ chatId, user }) => {
   );
 
   useEffect(() => {
+    socket.emit(CHAT_JOINED, { userId: user._id, members });
     dispatch(removeNewMessagesAlert(chatId));
     return () => {
       setMessages([]);
       setMessage("");
       setOldMessages([]);
       setPage(1);
+      socket.emit(CHAT_LEAVED, { userId: user._id, members });
     };
   }, [chatId]);
-
 
   useEffect(() => {
     if (bottomRef.current) {
-      bottomRef.current.scrollIntoView({behavior: "smooth"});
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [messages, oldMessages]);
-  
-  const alertListener = useCallback((content) => {
-    const messageForAlert = {
-      content,
-      sender: {
-        _id: "696969696969696969696969",
-        name: "ADMIN",
-      },
-      chat: chatId,
-      createdAt: new Date().toISOString(),
-    };
-    setMessages((prev) => [...prev, messageForAlert]);
-  }, [chatId]);
+  }, [messages]);
 
+  useEffect(() => {
+    if (chatDetails.isError) return navigate("/");
+  }, [chatDetails.isError]);
 
-
+  const alertListener = useCallback(
+    (data) => {
+      if (data.chatId !== chatId) return;
+      const messageForAlert = {
+        content: data.message,
+        sender: {
+          _id: "696969696969696969696969",
+          name: "ADMIN",
+        },
+        chat: chatId,
+        createdAt: new Date().toISOString(),
+      };
+      setMessages((prev) => [...prev, messageForAlert]);
+    },
+    [chatId]
+  );
 
   const eventHandlers = {
-    [ALERT]:alertListener,
+    [ALERT]: alertListener,
     [NEW_MESSAGE]: newMessagesListner,
     [START_TYPING]: startTypingListener,
     [STOP_TYPING]: stopTypingListener,
   };
-
 
   useSocketEvents(socket, eventHandlers);
 
@@ -178,8 +190,8 @@ const Chat = ({ chatId, user }) => {
           <MessageComponent key={message._id} message={message} user={user} />
         ))}
 
-        {userTyping && <TypingLoader/>}
-        <div ref={bottomRef}/>
+        {userTyping && <TypingLoader />}
+        <div ref={bottomRef} />
       </Stack>
 
       <form

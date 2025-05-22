@@ -1,9 +1,13 @@
 import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
-import { Chat } from "../models/chat.js";
-import { User } from "../models/user.js";
-import { Message } from "../models/message.js";
-import { deleteFilesFromCloudinary, emitEvent, uploadFilesToCloudinary } from "../utils/features.js";
+import { Chat } from "../models/Chat.js";
+import { User } from "../models/User.js";
+import { Message } from "../models/Message.js";
+import {
+  deleteFilesFromCloudinary,
+  emitEvent,
+  uploadFilesToCloudinary,
+} from "../utils/features.js";
 import {
   ALERT,
   NEW_MESSAGE,
@@ -26,7 +30,10 @@ const newGroupChat = TryCatch(async (req, res, next) => {
     groupChat: true,
     members: allMembers,
   });
-  emitEvent(req, ALERT, allMembers, `Welcome to the group ${name}`);
+  emitEvent(req, ALERT, allMembers,{
+    message: `You have been added to ${name}`,
+    chatId: groupChat._id,
+  });
   emitEvent(req, REFETCH_CHATS, members);
 
   return res.status(201).json({
@@ -114,7 +121,10 @@ const addMembers = TryCatch(async (req, res, next) => {
   await chat.save();
 
   const allUsersName = allNewMembers.map(({ name }) => name).join(", ");
-  emitEvent(req, ALERT, chat.members, `${allUsersName} added to the group`);
+  emitEvent(req, ALERT, chat.members, {
+    message: `${allUsersName} added to the group`,
+    chatId,
+  });
   emitEvent(req, REFETCH_CHATS, chat.members);
 
   return res.status(200).json({
@@ -136,7 +146,7 @@ const removeMember = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("Only creator can remove members", 403));
   }
   const member = chat.members.find(
-    (member) => member._id.toString() === memberId.toString()
+    (mem) => mem._id.toString() === memberId.toString()
   );
   if (!member) {
     return next(new ErrorHandler("Member not found", 404));
@@ -144,15 +154,20 @@ const removeMember = TryCatch(async (req, res, next) => {
   if (member._id.toString() === req.user.toString()) {
     return next(new ErrorHandler("You cannot remove yourself", 400));
   }
-  if (member.length <= 3) {
+  if (chat.members.length <= 3) {
     return next(new ErrorHandler("Group must have 3 members", 400));
   }
+
+  const allChatMembers = chat.members.map((i) => i.toString());
   chat.members = chat.members.filter(
-    (member) => member._id.toString() !== memberId.toString()
+    (mem) => mem._id.toString() !== memberId.toString()
   );
   await chat.save();
-  emitEvent(req, ALERT, chat.members, `${member.name} removed from the group`);
-  emitEvent(req, REFETCH_CHATS, chat.members);
+  emitEvent(req, ALERT, chat.members, {
+    message: `${member.name} removed from the group`,
+    chatId,
+  });
+  emitEvent(req, REFETCH_CHATS, allChatMembers);
   return res.status(200).json({
     success: true,
     message: "Member removed successfully",
@@ -187,7 +202,15 @@ const leaveGroup = TryCatch(async (req, res, next) => {
     chat.save(),
   ]);
 
-  emitEvent(req, ALERT, chat.members, `${user.name} left the group`);
+  emitEvent(req, ALERT, chat.members, {
+    chatId,
+    message: `${user.name} left the group`,
+  });
+
+  return res.status(200).json({
+    success: true,
+    message: "Leaved Group Successfully",
+  });
 });
 
 const sendAttachments = TryCatch(async (req, res, next) => {
@@ -202,7 +225,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   if (files.length < 1) {
     return next(new ErrorHandler("Please upload a file", 400));
   }
-  if(files.length > 5){
+  if (files.length > 5) {
     return next(new ErrorHandler("You can upload upto 5 files", 400));
   }
   //Uplaod files to cloudinary
@@ -340,6 +363,16 @@ const getMessages = TryCatch(async (req, res, next) => {
   const { page = 1 } = req.query;
   const limit = 20;
   const skip = (page - 1) * limit;
+
+  const chat = await Chat.findById(chatId);
+
+  if (!chat) {
+    return next(new ErrorHandler("Chat not found", 404));
+  }
+  if (!chat.members.includes(req.user.toString())) {
+    return next(new ErrorHandler("You are not a member of this chat", 403));
+  }
+
   const [messages, totalMessagesCount] = await Promise.all([
     Message.find({ chat: chatId })
       .sort({ createdAt: -1 })

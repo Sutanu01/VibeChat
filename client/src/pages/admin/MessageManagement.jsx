@@ -1,14 +1,13 @@
+import { useFetchData } from "6pp";
 import { Avatar, Box, Stack } from "@mui/material";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import RenderAttachment from "../../components/shared/RenderAttachment";
 import Table from "../../components/shared/Table";
-// import { useFetchData } from "6pp";
-// import { server } from "../../constants/config";
-// import { useErrors } from "../../hooks/hook";
+import { server } from "../../constants/config";
+import { useErrors } from "../../hooks/hook";
 import { fileFormat, transformImage } from "../../lib/features";
-import { dashboardData } from "../../constants/sampleData";
 
 const columns = [
   {
@@ -31,7 +30,7 @@ const columns = [
             const file = fileFormat(url);
 
             return (
-              <Box key={i}>
+              <Box>
                 <a
                   href={url}
                   download
@@ -88,19 +87,17 @@ const columns = [
 ];
 
 const MessageManagement = () => {
-  // const { loading, data, error } = useFetchData(
-  //   `${server}/api/v1/admin/messages`,
-  //   "dashboard-messages"
-  // );
+  const { loading, data, error } = useFetchData(
+    `${server}/api/v1/admin/messages`,
+    "dashboard-messages"
+  );
 
-  // useErrors([
-  //   {
-  //     isError: error,
-  //     error: error,
-  //   },
-  // ]);
-  const loading = false;
-  const data=dashboardData
+  useErrors([
+    {
+      isError: error,
+      error: error,
+    },
+  ]);
 
   const [rows, setRows] = useState([]);
 

@@ -9,7 +9,6 @@ import {
   PointElement,
   Tooltip,
 } from "chart.js";
-import React from "react";
 import { Doughnut, Line } from "react-chartjs-2";
 import {
   orange,

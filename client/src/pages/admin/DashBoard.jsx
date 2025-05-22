@@ -1,3 +1,4 @@
+import { useFetchData } from "6pp";
 import {
   AdminPanelSettings as AdminPanelSettingsIcon,
   Group as GroupIcon,
@@ -14,7 +15,6 @@ import {
   Typography,
 } from "@mui/material";
 import moment from "moment";
-import React from "react";
 import AdminLayout from "../../components/layout/AdminLayout";
 import { DoughnutChart, LineChart } from "../../components/specific/Charts";
 import {
@@ -22,27 +22,23 @@ import {
   SearchField,
 } from "../../components/styles/StyledComponents";
 import { matBlack } from "../../constants/color";
-import { dashboardData } from "../../constants/sampleData";
-// import { server } from "../../constants/config";
-// import { useErrors } from "../../hooks/hook";
-// import { useFetchData } from "6pp";
+import { server } from "../../constants/config";
+import { useErrors } from "../../hooks/hook";
+
 
 const Dashboard = () => {
-  const loading = false;
-  // const { loading, data, error } = useFetchData(
-  //   `${server}/api/v1/admin/stats`,
-  //   "dashboard-stats"
-  // );
+  const { loading, data, error } = useFetchData(
+    `${server}/api/v1/admin/stats`,
+    "dashboard-stats"
+  );
 
-  // const { stats } = data || {};
-  const stats={};
-
-  // useErrors([
-  //   {
-  //     isError: error,
-  //     error: error,
-  //   },
-  // ]);
+  const { stats } = data || {};
+  useErrors([
+    {
+      isError: error,
+      error: error,
+    },
+  ]);
 
   const Appbar = (
     <Paper

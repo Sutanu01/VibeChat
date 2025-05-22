@@ -1,35 +1,44 @@
-import React, { useState } from "react";
+import { useInputValidation } from "6pp";
 import {
   Button,
   Container,
   Paper,
   TextField,
-  Typography,
-  Stack,
-  Avatar,
-  IconButton,
+  Typography
 } from "@mui/material";
-import {useInputValidation } from "6pp";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
-const isAdmin = true; // Replace with actual admin check
+import { bgGradient } from "../../constants/color";
+import { adminLogin, getAdmin } from "../../redux/thunks/admin";
 
 const AdminLogin = () => {
-    const secretKey=useInputValidation("");
-    const submitHandler=(e)=>{
-        e.preventDefault();
-        console.log("Login");
-    }
-    if(isAdmin)return <Navigate to="/admin/dashboard" />;
+  const { isAdmin } = useSelector((state) => state.auth);
+
+  const dispatch = useDispatch();
+
+  const secretKey = useInputValidation("");
+
+  const submitHandler = (e) => {
+    e.preventDefault();
+    dispatch(adminLogin(secretKey.value));
+  };
+
+  useEffect(() => {
+    dispatch(getAdmin());
+  }, [dispatch]);
+
+  if (isAdmin) return <Navigate to="/admin/dashboard" />;
+
   return (
     <div
       style={{
-        backgroundImage:
-          "linear-gradient(rgba(200,200,200,0.5),rgba(120,110,220,0.5))",
+        backgroundImage: bgGradient,
       }}
     >
       <Container
         component={"main"}
-        maxWidth={"xs"}
+        maxWidth="xs"
         sx={{
           height: "100vh",
           display: "flex",
@@ -38,47 +47,49 @@ const AdminLogin = () => {
         }}
       >
         <Paper
-          elevation={5}
+          elevation={3}
           sx={{
             padding: 4,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            backgroundColor: "rgba(255,255,255,0.6)",
-            backdropFilter: "blur(5px)",
           }}
         >
-              <Typography variant={"h4"} color="rgba(120,110,220)" sx={{ fontFamily: "cursive" }} >Login</Typography>
-              <form
-                style={{
-                  width: "100%",
-                  marginTop: "1rem",
-                }}
-                onSubmit={submitHandler}
-              >
-                <TextField
-                  required
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  margin="normal"
-                  variant="outlined"
-                  value={secretKey.value}
-                  onChange={secretKey.changeHandler}
-                />
-                <Button
-                  sx={{ marginTop: "1rem" }}
-                  fullWidth
-                  type="submit"
-                  variant="contained"
-                >
-                  Login
-                </Button>
-              </form>
+          <Typography variant="h5">Admin Login</Typography>
+          <form
+            style={{
+              width: "100%",
+              marginTop: "1rem",
+            }}
+            onSubmit={submitHandler}
+          >
+            <TextField
+              required
+              fullWidth
+              label="Secret Key"
+              type="password"
+              margin="normal"
+              variant="outlined"
+              value={secretKey.value}
+              onChange={secretKey.changeHandler}
+            />
+
+            <Button
+              sx={{
+                marginTop: "1rem",
+              }}
+              variant="contained"
+              color="primary"
+              type="submit"
+              fullWidth
+            >
+              Login
+            </Button>
+          </form>
         </Paper>
       </Container>
     </div>
-  )
-}
+  );
+};
 
-export default AdminLogin
+export default AdminLogin;

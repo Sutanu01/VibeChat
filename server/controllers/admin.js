@@ -1,8 +1,8 @@
 import { TryCatch } from "../middlewares/error.js";
 import { ErrorHandler } from "../utils/utility.js";
-import { Chat } from "../models/chat.js";
-import { User } from "../models/user.js";
-import { Message } from "../models/message.js";
+import { Chat } from "../models/Chat.js";
+import { User } from "../models/User.js";
+import { Message } from "../models/Message.js";
 import jwt from "jsonwebtoken";
 import { cookieOptions } from "../utils/features.js";
 

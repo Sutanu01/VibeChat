@@ -26,6 +26,7 @@ import { userNotExists } from "../../redux/reducers/auth";
 import { useNavigate } from "react-router-dom";
 import {
   setIsMobile,
+  setIsNewGroup,
   setIsNotification,
   setIsSearch,
 } from "../../redux/reducers/misc";
@@ -38,10 +39,9 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { isSearch, isNotification } = useSelector((state) => state.misc);
+  const { isSearch, isNotification,isNewGroup } = useSelector((state) => state.misc);
   const { notificationCount } = useSelector((state) => state.misc);
 
-  const [isNewGroup, setisNewGroup] = useState(false);
 
   const handleMobile = () => dispatch(setIsMobile(true));
   const openSearch = () => dispatch(setIsSearch(true));
@@ -51,7 +51,7 @@ const Header = () => {
   }
 
   const openNewGroup = () => {
-    setisNewGroup(!isNewGroup);
+    dispatch(setIsNewGroup(true));
   };
 
   const navigateToGroup = () => {

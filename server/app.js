@@ -15,20 +15,24 @@ import userRoute from "./routes/user.js";
 import chatRoute from "./routes/chat.js";
 import adminRoute from "./routes/admin.js";
 import {
+  CHAT_JOINED,
+  CHAT_LEAVED,
   NEW_MESSAGE,
   NEW_MESSAGE_ALERT,
+  ONLINE_USERS,
   START_TYPING,
   STOP_TYPING,
 } from "./constants/event.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
-import { Message } from "./models/message.js";
+import { Message } from "./models/Message.js";
 
 export const envMode = process.env.NODE_ENV.trim() || "PRODUCTION";
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
 export const CLIENT_URL = process.env.CLIENT_URL;
 export const userSocketIDs = new Map();
+const onlineUsers = new Set();
 
 const app = express();
 app.use(express.json());
@@ -118,9 +122,23 @@ io.on("connection", (socket) => {
     socket.to(memberSocket).emit(STOP_TYPING, { chatId });
   });
    
+  socket.on(CHAT_JOINED, ({userId,members}) => {
+     onlineUsers.add(userId.toString());
+     const memberSocket = getSockets(members);
+     io.to(memberSocket).emit(ONLINE_USERS,Array.from(onlineUsers));
+  });
+
+  socket.on(CHAT_LEAVED, ({userId,members}) => {
+    onlineUsers.delete(userId.toString());
+    const memberSocket = getSockets(members);
+    io.to(memberSocket).emit(ONLINE_USERS,Array.from(onlineUsers));
+  });
+
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
     userSocketIDs.delete(user._id.toString());
+    onlineUsers.delete(user._id.toString());
+    socket.broadcast.emit(ONLINE_USERS, Array.from(onlineUsers));
   });
 });
 
