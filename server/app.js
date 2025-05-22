@@ -14,7 +14,12 @@ import { socketAuthenticator } from "./middlewares/auth.js";
 import userRoute from "./routes/user.js";
 import chatRoute from "./routes/chat.js";
 import adminRoute from "./routes/admin.js";
-import { NEW_MESSAGE, NEW_MESSAGE_ALERT } from "./constants/event.js";
+import {
+  NEW_MESSAGE,
+  NEW_MESSAGE_ALERT,
+  START_TYPING,
+  STOP_TYPING,
+} from "./constants/event.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/message.js";
@@ -40,9 +45,12 @@ cloudinary.config({
 });
 
 const server = createServer(app);
+
 const io = new Server(server, {
   cors: corsOptions,
 });
+
+app.set("io", io);
 
 app.use("/api/v1/user", userRoute);
 app.use("/api/v1/chat", chatRoute);
@@ -60,7 +68,7 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  const user =socket.user;
+  const user = socket.user;
   userSocketIDs.set(user._id.toString(), socket.id);
 
   console.log("a user connected", socket.id);
@@ -100,6 +108,16 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on(START_TYPING, ({ members, chatId }) => {
+    const memberSocket = getSockets(members);
+    socket.to(memberSocket).emit(START_TYPING, { chatId });
+  });
+  
+  socket.on(STOP_TYPING, ({ members, chatId }) => {
+    const memberSocket = getSockets(members);
+    socket.to(memberSocket).emit(STOP_TYPING, { chatId });
+  });
+   
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
     userSocketIDs.delete(user._id.toString());

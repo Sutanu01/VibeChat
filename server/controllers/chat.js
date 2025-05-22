@@ -3,10 +3,10 @@ import { ErrorHandler } from "../utils/utility.js";
 import { Chat } from "../models/chat.js";
 import { User } from "../models/user.js";
 import { Message } from "../models/message.js";
-import { deleteFilesFromCloudinary, emitEvent } from "../utils/features.js";
+import { deleteFilesFromCloudinary, emitEvent, uploadFilesToCloudinary } from "../utils/features.js";
 import {
   ALERT,
-  NEW_ATTACHMENT,
+  NEW_MESSAGE,
   NEW_MESSAGE_ALERT,
   REFETCH_CHATS,
 } from "../constants/event.js";
@@ -206,7 +206,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("You can upload upto 5 files", 400));
   }
   //Uplaod files to cloudinary
-  const attachments = [];
+  const attachments = await uploadFilesToCloudinary(files);
 
   const messageForRealTime = {
     content: "",
@@ -226,7 +226,7 @@ const sendAttachments = TryCatch(async (req, res, next) => {
   };
   const message = await Message.create(messageForDB);
 
-  emitEvent(req, NEW_ATTACHMENT, chat.members, {
+  emitEvent(req, NEW_MESSAGE, chat.members, {
     message: messageForRealTime,
     chatId,
   });
