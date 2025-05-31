@@ -1,5 +1,5 @@
 import { Drawer, Grid, Skeleton } from "@mui/material";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef,useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -22,9 +22,8 @@ import Title from "../shared/Title";
 import Chatlist from "../specific/Chatlist";
 import Profile from "../specific/Profile";
 import Header from "./Header";
-import { set } from "mongoose";
 
-const AppLayout = () => (WrappedComponent) => {
+const AppLayout = (WrappedComponent) => {
   return (props) => {
     const params = useParams();
     const navigate = useNavigate();
@@ -41,7 +40,6 @@ const AppLayout = () => (WrappedComponent) => {
 
     const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
     useErrors([{ isError, error }]);
-
     useEffect(() => {
       getOrSaveFromStorage({
         key: NEW_MESSAGE_ALERT,

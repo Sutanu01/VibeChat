@@ -27,7 +27,7 @@ import { removeNewMessagesAlert } from "../redux/reducers/chat.js";
 import { TypingLoader } from "../components/layout/Loaders.jsx";
 import { useNavigate } from "react-router-dom";
 
-const Chat = ({ chatId, user }) => {
+const ChatComponent = ({ chatId, user }) => {
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
   const navigate = useNavigate();
@@ -242,5 +242,5 @@ const Chat = ({ chatId, user }) => {
     </>
   );
 };
-
-export default AppLayout()(Chat);
+const Chat = AppLayout(ChatComponent);
+export default Chat;

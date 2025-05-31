@@ -27,8 +27,10 @@ const Router = express.Router();
 
 Router.use(isAuthenticated);
 
-Router.post("./new", newGroupValidator(), validateHandler, newGroupChat);
 
+
+
+Router.post("/new", newGroupValidator(), validateHandler, newGroupChat);
 Router.get("/my", getMyChats);
 Router.get("/my/groups", getMyGroups);
 
@@ -50,7 +52,7 @@ Router.post(
   sendAttachments
 );
 
-Router.get("/messages/:id", chatIdValidator(), validateHandler, getMessages);
+Router.get("/message/:id", chatIdValidator(), validateHandler, getMessages);
 
 Router.route("/:id")
   .get(chatIdValidator(), validateHandler, getChatDetails)

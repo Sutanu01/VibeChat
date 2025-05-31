@@ -111,7 +111,6 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
   const request = await Request.findById(requestId)
     .populate("sender", "name")
     .populate("receiver", "name");
-
   if (!request) {
     return next(new ErrorHandler("Request not found", 404));
   }
@@ -134,7 +133,7 @@ const acceptFriendRequest = TryCatch(async (req, res, next) => {
   await Promise.all([
     Chat.create({
       members,
-      chatName: `${request.sender.name} and ${request.receiver.name}`,
+      name: `${request.sender.name} and ${request.receiver.name}`,
     }),
     request.deleteOne(),
   ]);

@@ -11,12 +11,12 @@ import {
 import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useAsyncMutation, useErrors } from "../../hooks/hook";
-import { useAcceptFriendRequestMutation, useGetNotificationQuery } from "../../redux/api/api";
+import { useAcceptFriendRequestMutation, useGetNotificationsQuery } from "../../redux/api/api";
 import { setIsNotification } from "../../redux/reducers/misc";
 const Notification = () => {
   const dispatch = useDispatch();
   const {isNotification} =useSelector((state) => state.misc);
-  const { isLoading, data, error, isError } = useGetNotificationQuery();
+  const { isLoading, data, error, isError } = useGetNotificationsQuery();
   
   const [acceptRequest]=useAsyncMutation(useAcceptFriendRequestMutation)
 

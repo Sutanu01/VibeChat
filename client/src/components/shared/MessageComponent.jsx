@@ -4,46 +4,66 @@ import { lightBlueColor } from "../../constants/color";
 import moment from "moment";
 import { fileFormat } from "../../lib/features";
 import RenderAttachment from "./RenderAttachment";
-import {motion} from "framer-motion";
+import { motion } from "framer-motion";
 
 const MessageComponent = ({ message, user }) => {
   const { content, attachments = [], sender, createdAt } = message;
   const sameSender = user._id === sender._id;
   const timeAgo = moment(createdAt).fromNow();
+
   return (
     <motion.div
-      initial={{ opacity: 0, x: "-100%" }}
-      whileInView={{ opacity: 1, x: 0 }}
+      initial={{ opacity: 0, x: sameSender ? 50 : -50 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: sameSender ? 50 : -50 }}
+      transition={{ type: "spring", stiffness: 70, damping: 15 }}
       style={{
         alignSelf: sameSender ? "flex-end" : "flex-start",
         backgroundColor: "white",
         color: "black",
-        borderRadius: "5px",
-        padding: "0.5rem",
-        width: "fit-content",
+        borderRadius: "8px",
+        padding: "0.75rem",
+        maxWidth: "80%",
+        margin: "0.5rem",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
       }}
     >
-      <Typography color={lightBlueColor} fontWeight={"600"} variant="caption">
+      <Typography
+        color={lightBlueColor}
+        fontWeight="600"
+        variant="caption"
+        sx={{ mb: 0.5 }}
+      >
         {sameSender ? "You" : sender.name}
       </Typography>
 
-      {content && <Typography>{content}</Typography>}
-      {attachments.length > 0 &&
-        attachments.map((attachment, index) => {
-          const url = attachment.url;
-          const file = fileFormat(url);
-          return (
-            <Box key={index}>
-              <a
-                href={url}
-                target="_blank"
-                download
-                style={{ color: "black" }}
-              >{RenderAttachment(file,url)}</a>
-            </Box>
-          );
-        })}
-      <Typography variant="caption" color="text.secondary">
+      {content && (
+        <Typography sx={{ mb: attachments.length ? 1 : 0 }}>{content}</Typography>
+      )}
+
+      {attachments.map((attachment, index) => {
+        const url = attachment.url;
+        const file = fileFormat(url);
+        return (
+          <Box key={index} sx={{ my: 0.5 }}>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              download
+              style={{ color: "black", textDecoration: "none" }}
+            >
+              {RenderAttachment(file, url)}
+            </a>
+          </Box>
+        );
+      })}
+
+      <Typography
+        variant="caption"
+        color="text.secondary"
+        sx={{ display: "block", marginTop: "0.3rem", textAlign: "right" }}
+      >
         {timeAgo}
       </Typography>
     </motion.div>

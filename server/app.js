@@ -75,8 +75,6 @@ io.on("connection", (socket) => {
   const user = socket.user;
   userSocketIDs.set(user._id.toString(), socket.id);
 
-  console.log("a user connected", socket.id);
-
   socket.on(NEW_MESSAGE, async ({ chatId, members, message }) => {
     const messageForRealtime = {
       content: message,
@@ -103,7 +101,6 @@ io.on("connection", (socket) => {
     io.to(memberSocket).emit(NEW_MESSAGE_ALERT, {
       chatId,
     });
-
     try {
       await Message.create(messageForDB);
     } catch (error) {
@@ -135,7 +132,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("user disconnected", socket.id);
     userSocketIDs.delete(user._id.toString());
     onlineUsers.delete(user._id.toString());
     socket.broadcast.emit(ONLINE_USERS, Array.from(onlineUsers));

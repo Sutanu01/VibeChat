@@ -9,7 +9,7 @@ const isAuthenticated = (req, res, next) => {
     return next(new ErrorHandler("Please login to access this resource", 401));
   }
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  req.user = decoded._id;
+  req.user = decoded.id;
   next();
 };
 
@@ -33,7 +33,7 @@ const socketAuthenticator = async (err, socket, next) => {
     const authtoken = socket.request.cookies[VIBECHAT_TOKEN];
     if (!authtoken) return next(new ErrorHandler("Authentication error", 401));
     const decoded = jwt.verify(authtoken, process.env.JWT_SECRET);
-    const user = await User.findById(decoded._id);
+    const user = await User.findById(decoded.id);
     if (!user) return next(new ErrorHandler("Authentication error", 401));
     socket.user = user;
     return next();

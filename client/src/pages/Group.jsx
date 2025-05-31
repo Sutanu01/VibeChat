@@ -131,20 +131,6 @@ const Group = () => {
   };
   //-----------------------------------------
 
-  useEffect(() => {
-    if (chatId) {
-      setGroupName(`Group Name ${chatId}`); //temp;
-      setUpdateGroupName(`Group Name ${chatId}`); //temp;
-    }
-
-    // When we switch the group the values should be reset
-    return () => {
-      setGroupName("");
-      setUpdateGroupName("");
-      setIsEditGroup(false);
-    };
-  }, [chatId]);
-
   //-------------Components----------------
   const IconBtns = (
     <>

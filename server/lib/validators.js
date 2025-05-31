@@ -24,7 +24,7 @@ const LoginValidator = () => [
 
 const newGroupValidator = () => [
   body("name", "Please enter Name").notEmpty(),
-  body("Members")
+  body("members")
     .notEmpty()
     .withMessage("Please Enter  Members")
     .isArray({ min: 2, max: 99 })
