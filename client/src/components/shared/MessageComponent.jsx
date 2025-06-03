@@ -1,10 +1,9 @@
-import React from "react";
 import { Box, Typography } from "@mui/material";
-import { lightBlueColor } from "../../constants/color";
+import { motion } from "framer-motion";
 import moment from "moment";
+import { lightBlueColor ,orange } from "../../constants/color";
 import { fileFormat } from "../../lib/features";
 import RenderAttachment from "./RenderAttachment";
-import { motion } from "framer-motion";
 
 const MessageComponent = ({ message, user }) => {
   const { content, attachments = [], sender, createdAt } = message;
@@ -25,6 +24,7 @@ const MessageComponent = ({ message, user }) => {
         padding: "0.75rem",
         maxWidth: "80%",
         margin: "0.5rem",
+        minWidth: "125px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
       }}
     >

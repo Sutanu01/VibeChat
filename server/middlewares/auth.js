@@ -38,7 +38,6 @@ const socketAuthenticator = async (err, socket, next) => {
     socket.user = user;
     return next();
   } catch (error) {
-    console.log(error);
     next(new ErrorHandler("Authentication error", 401));
   }
 };

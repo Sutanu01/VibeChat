@@ -1,12 +1,12 @@
 import { Drawer, Grid, Skeleton } from "@mui/material";
-import { useCallback, useEffect, useRef,useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   NEW_MESSAGE_ALERT,
   NEW_REQUEST,
   ONLINE_USERS,
-  REFETCH_CHATS
+  REFETCH_CHATS,
 } from "../../constants/event";
 import { useErrors, useSocketEvents } from "../../hooks/hook";
 import { getOrSaveFromStorage } from "../../lib/features";
@@ -15,11 +15,15 @@ import {
   incrementNotification,
   setNewMessagesAlert,
 } from "../../redux/reducers/chat";
-import { setIsDeleteMenu, setIsMobile, setSelectedDeleteChat } from "../../redux/reducers/misc";
+import {
+  setIsDeleteMenu,
+  setIsMobile,
+  setSelectedDeleteChat,
+} from "../../redux/reducers/misc";
 import { getSocket } from "../../socket";
 import DeleteChatMenu from "../dialogs/DeleteChatMenu";
 import Title from "../shared/Title";
-import Chatlist from "../specific/Chatlist";
+import Chatlist from "../specific/ChatList";
 import Profile from "../specific/Profile";
 import Header from "./Header";
 
@@ -32,12 +36,14 @@ const AppLayout = (WrappedComponent) => {
     const chatId = params.chatId;
     const deleteMenuAnchor = useRef(null);
 
-    const [onlineUsers, setOnlineUsers] = useState([])
-
+    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [isProfileOpen, setIsProfileOpen] = useState(false);
     const { isMobile } = useSelector((state) => state.misc);
     const { user } = useSelector((state) => state.auth);
     const { newMessagesAlert } = useSelector((state) => state.chat);
-
+    const handleProfileToggle = () => {
+      setIsProfileOpen(!isProfileOpen);
+    };
     const { isLoading, data, isError, error, refetch } = useMyChatsQuery("");
     useErrors([{ isError, error }]);
     useEffect(() => {
@@ -75,27 +81,40 @@ const AppLayout = (WrappedComponent) => {
     }, [refetch, navigate]);
 
     const onlineUsersListner = useCallback((data) => {
-       setOnlineUsers(data);
-    },[]);
+      setOnlineUsers(data);
+    }, []);
 
     const eventHandlers = {
       [NEW_MESSAGE_ALERT]: newMessageAlertListener,
       [NEW_REQUEST]: newRequestListener,
       [REFETCH_CHATS]: refetchListener,
-      [ONLINE_USERS]:onlineUsersListner,
+      [ONLINE_USERS]: onlineUsersListner,
     };
     useSocketEvents(socket, eventHandlers);
 
     return (
       <>
         <Title />
-        <Header />
+        <Header handleProfileToggle={handleProfileToggle} />
 
         <DeleteChatMenu
           dispatch={dispatch}
           deleteMenuAnchor={deleteMenuAnchor}
         />
-
+        <Drawer
+          anchor="right"
+          open={isProfileOpen}
+          onClose={() => setIsProfileOpen(false)}
+          PaperProps={{
+            sx: {
+              width: { xs: "100%", sm: 400 },
+              bgcolor: "rgba(0,0,0,0.95)",
+              p: 3,
+            },
+          }}
+        >
+          <Profile user={user} />
+        </Drawer>
         {isLoading ? (
           <Skeleton />
         ) : (
@@ -131,21 +150,8 @@ const AppLayout = (WrappedComponent) => {
               />
             )}
           </Grid>
-          <Grid item xs={12} sm={8} md={5} lg={6} height={"100%"}>
+          <Grid item xs={12} sm={8} md={9} lg={9} height={"100%"}>
             <WrappedComponent {...props} chatId={chatId} user={user} />
-          </Grid>
-          <Grid
-            item
-            md={4}
-            lg={3}
-            height={"100%"}
-            sx={{
-              display: { xs: "none", md: "block" },
-              padding: "2rem",
-              bgcolor: "rgba(0,0,0,0.85)",
-            }}
-          >
-            <Profile user={user} />
           </Grid>
         </Grid>
       </>

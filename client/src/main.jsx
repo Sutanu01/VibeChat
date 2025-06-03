@@ -5,6 +5,7 @@ import { CssBaseline } from "@mui/material";
 import { HelmetProvider } from "react-helmet-async";
 import { Provider } from "react-redux";
 import store from "./redux/stores.js";
+import "./global.css";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

@@ -11,12 +11,12 @@ import { cookieOptions } from "../utils/features.js";
 
 const adminLogin = TryCatch(async (req, res, next) => {
   const { secretKey } = req.body;
-  const adminSecretKey = process.env.ADMIN_SECRET_KEY || "IITRANCHI";
+  const adminSecretKey = process.env.ADMIN_SECRET_KEY;
   const isMatch = secretKey === adminSecretKey;
   if (!isMatch) {
     return next(new ErrorHandler("Invalid Admin Key", 401));
   }
-  const token = jwt.sign(secretKey, process.env.JWT_SECRET_KEY);
+  const token = jwt.sign(secretKey, process.env.JWT_SECRET);
 
   return res
     .status(200)
@@ -76,7 +76,7 @@ const allChats = TryCatch(async (req, res, next) => {
     .populate("creator", "name avatar");
 
   const transformedChats = await Promise.all(
-    chats.map(async ({ _id, groupChat, name, creator }) => {
+    chats.map(async ({ members,_id, groupChat, name, creator }) => {
       const totalMessages = await Message.countDocuments({ chat: _id });
       return {
         _id,
@@ -139,7 +139,7 @@ const getDashBoardStats = TryCatch(async (req, res, next) => {
 
   const today = new Date();
   const last7days = new Date();
-  lastDate.setDate(today.getDate() - 7);
+  last7days.setDate(today.getDate() - 7);
 
   const last7daysMessages = await Message.find({
     createdAt: {

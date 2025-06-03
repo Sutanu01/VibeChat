@@ -15,7 +15,6 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { VisuallyHiddenInput } from "../components/styles/StyledComponents";
-import { bgGradient } from "../constants/color";
 import { server } from "../constants/config";
 import { userExists } from "../redux/reducers/auth";
 import { usernameValidator } from "../utils/validators";
@@ -39,14 +38,7 @@ const Login = () => {
     e.preventDefault();
 
     const toastId = toast.loading("Logging In...");
-
     setIsLoading(true);
-    const config = {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
 
     try {
       const { data } = await axios.post(
@@ -55,12 +47,15 @@ const Login = () => {
           username: username.value,
           password: password.value,
         },
-        config
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       dispatch(userExists(data.user));
-      toast.success(data.message, {
-        id: toastId,
-      });
+      toast.success(data.message, { id: toastId });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something Went Wrong", {
         id: toastId,
@@ -83,24 +78,15 @@ const Login = () => {
     formData.append("username", username.value);
     formData.append("password", password.value);
 
-    const config = {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    };
-
     try {
-      const { data } = await axios.post(
-        `${server}/api/v1/user/new`,
-        formData,
-        config
-      );
-
-      dispatch(userExists(data.user));
-      toast.success(data.message, {
-        id: toastId,
+      const { data } = await axios.post(`${server}/api/v1/user/new`, formData, {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
+      dispatch(userExists(data.user));
+      toast.success(data.message, { id: toastId });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something Went Wrong", {
         id: toastId,
@@ -113,102 +99,46 @@ const Login = () => {
   return (
     <div
       style={{
-        backgroundImage: bgGradient,
+        backgroundColor: "#2d0036", // lighter background tone
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
-      <Container
-        component={"main"}
-        maxWidth="xs"
-        sx={{
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <Container maxWidth="sm">
         <Paper
-          elevation={3}
+          elevation={4}
           sx={{
-            padding: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
+            p: 4,
+            borderRadius: "16px",
+            backdropFilter: "blur(10px)",
+            backgroundColor: "#1a0023", // dark bg same as NotFound
+            color: "#fff",
+            boxShadow: "0 8px 32px rgba(111, 0, 168, 0.6)", // purple shadow
+            width: "100%",
           }}
         >
-          {isLogin ? (
-            <>
-              <Typography variant="h5">Login</Typography>
-              <form
-                style={{
-                  width: "100%",
-                  marginTop: "1rem",
-                }}
-                onSubmit={handleLogin}
-              >
-                <TextField
-                  required
-                  fullWidth
-                  label="Username"
-                  margin="normal"
-                  variant="outlined"
-                  value={username.value}
-                  onChange={username.changeHandler}
-                />
+          <Typography
+            variant="h4"
+            align="center"
+            mb={3}
+            fontWeight={600}
+            sx={{ color: "#b39ddb" }}
+          >
+            {isLogin ? "Welcome Back 👋" : "Create an Account"}
+          </Typography>
 
-                <TextField
-                  required
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  margin="normal"
-                  variant="outlined"
-                  value={password.value}
-                  onChange={password.changeHandler}
-                />
-
-                <Button
-                  sx={{
-                    marginTop: "1rem",
-                  }}
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  fullWidth
-                  disabled={isLoading}
-                >
-                  Login
-                </Button>
-
-                <Typography textAlign={"center"} m={"1rem"}>
-                  OR
-                </Typography>
-
-                <Button
-                  disabled={isLoading}
-                  fullWidth
-                  variant="text"
-                  onClick={toggleLogin}
-                >
-                  Sign Up Instead
-                </Button>
-              </form>
-            </>
-          ) : (
-            <>
-              <Typography variant="h5">Sign Up</Typography>
-              <form
-                style={{
-                  width: "100%",
-                  marginTop: "1rem",
-                }}
-                onSubmit={handleSignUp}
-              >
+          <form onSubmit={isLogin ? handleLogin : handleSignUp}>
+            {!isLogin && (
+              <>
                 <Stack position={"relative"} width={"10rem"} margin={"auto"}>
                   <Avatar
                     sx={{
                       width: "10rem",
                       height: "10rem",
-                      objectFit: "contain",
+                      objectFit: "cover",
+                      borderRadius: "16px",
                     }}
                     src={avatar.preview}
                   />
@@ -218,11 +148,8 @@ const Login = () => {
                       position: "absolute",
                       bottom: "0",
                       right: "0",
-                      color: "white",
-                      bgcolor: "rgba(0,0,0,0.5)",
-                      ":hover": {
-                        bgcolor: "rgba(0,0,0,0.7)",
-                      },
+                      bgcolor: "grey",
+                      borderRadius: "50%",
                     }}
                     component="label"
                   >
@@ -238,90 +165,125 @@ const Login = () => {
 
                 {avatar.error && (
                   <Typography
-                    m={"1rem auto"}
-                    width={"fit-content"}
-                    display={"block"}
                     color="error"
                     variant="caption"
+                    textAlign="center"
+                    display="block"
+                    mt={1}
                   >
                     {avatar.error}
                   </Typography>
                 )}
 
                 <TextField
-                  required
                   fullWidth
                   label="Name"
                   margin="normal"
-                  variant="outlined"
+                  variant="filled"
                   value={name.value}
                   onChange={name.changeHandler}
+                  required
+                  sx={{
+                    backgroundColor: "#2d0036",
+                    borderRadius: "8px",
+                    input: { color: "#fff" },
+                    "& .MuiInputLabel-root": { color: "#b39ddb" },
+                  }}
                 />
 
                 <TextField
-                  required
                   fullWidth
                   label="Bio"
                   margin="normal"
-                  variant="outlined"
+                  variant="filled"
                   value={bio.value}
                   onChange={bio.changeHandler}
-                />
-                <TextField
                   required
-                  fullWidth
-                  label="Username"
-                  margin="normal"
-                  variant="outlined"
-                  value={username.value}
-                  onChange={username.changeHandler}
-                />
-
-                {username.error && (
-                  <Typography color="error" variant="caption">
-                    {username.error}
-                  </Typography>
-                )}
-
-                <TextField
-                  required
-                  fullWidth
-                  label="Password"
-                  type="password"
-                  margin="normal"
-                  variant="outlined"
-                  value={password.value}
-                  onChange={password.changeHandler}
-                />
-
-                <Button
                   sx={{
-                    marginTop: "1rem",
+                    backgroundColor: "#2d0036",
+                    borderRadius: "8px",
+                    input: { color: "#fff" },
+                    "& .MuiInputLabel-root": { color: "#b39ddb" },
                   }}
-                  variant="contained"
-                  color="primary"
-                  type="submit"
-                  fullWidth
-                  disabled={isLoading}
-                >
-                  Sign Up
-                </Button>
+                />
+              </>
+            )}
 
-                <Typography textAlign={"center"} m={"1rem"}>
-                  OR
-                </Typography>
+            <TextField
+              fullWidth
+              label="Username"
+              margin="normal"
+              variant="filled"
+              value={username.value}
+              onChange={username.changeHandler}
+              required
+              sx={{
+                backgroundColor: "#2d0036",
+                borderRadius: "8px",
+                input: { color: "#fff" },
+                "& .MuiInputLabel-root": { color: "#b39ddb" },
+              }}
+            />
+            {username.error && (
+              <Typography color="error" variant="caption">
+                {username.error}
+              </Typography>
+            )}
 
-                <Button
-                  disabled={isLoading}
-                  fullWidth
-                  variant="text"
-                  onClick={toggleLogin}
-                >
-                  Login Instead
-                </Button>
-              </form>
-            </>
-          )}
+            <TextField
+              fullWidth
+              label="Password"
+              type="password"
+              margin="normal"
+              variant="filled"
+              value={password.value}
+              onChange={password.changeHandler}
+              required
+              sx={{
+                backgroundColor: "#2d0036",
+                borderRadius: "8px",
+                input: { color: "#fff" },
+                "& .MuiInputLabel-root": { color: "#b39ddb" },
+              }}
+            />
+
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{
+                mt: 2,
+                fontWeight: "bold",
+                backgroundColor: "#6f00a8",
+                "&:hover": { backgroundColor: "#5a0087" },
+              }}
+              disabled={isLoading}
+            >
+              {isLogin ? "Login" : "Sign Up"}
+            </Button>
+
+            <Typography textAlign="center" mt={2} sx={{ color: "#b39ddb" }}>
+              OR
+            </Typography>
+
+            <Button
+              fullWidth
+              variant="outlined"
+              onClick={toggleLogin}
+              sx={{
+                mt: 1,
+                color: "#6f00a8",
+                borderColor: "#6f00a8",
+                "&:hover": {
+                  borderColor: "#5a0087",
+                  backgroundColor: "rgba(111, 0, 168, 0.1)",
+                },
+              }}
+              disabled={isLoading}
+            >
+              {isLogin ? "Sign Up Instead" : "Login Instead"}
+            </Button>
+          </form>
         </Paper>
       </Container>
     </div>

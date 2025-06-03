@@ -1,4 +1,12 @@
 import {
+  Add as AddIcon,
+  Group as GroupIcon,
+  Menu as MenuIcon,
+  Notifications as NotificationIcon,
+  AccountCircle as ProfileIcon,
+  Search as SearchIcon
+} from "@mui/icons-material";
+import {
   AppBar,
   Backdrop,
   Badge,
@@ -8,39 +16,27 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import React, { lazy, Suspense, useState } from "react";
-import { orange } from "../../constants/color";
-import axios from "axios";
-import { server } from "../../constants/config";
-import { toast } from "react-hot-toast";
-import {
-  Menu as MenuIcon,
-  Search as SearchIcon,
-  Add as AddIcon,
-  Group as GroupIcon,
-  Logout as LogoutIcon,
-  Notifications as NotificationIcon,
-} from "@mui/icons-material";
+import { lazy, Suspense } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { userNotExists } from "../../redux/reducers/auth";
 import { useNavigate } from "react-router-dom";
+import { orange } from "../../constants/color";
+import { resetNotificationCount } from "../../redux/reducers/chat";
 import {
   setIsMobile,
   setIsNewGroup,
   setIsNotification,
   setIsSearch,
 } from "../../redux/reducers/misc";
-import { resetNotificationCount } from "../../redux/reducers/chat";
 const SearchDialog = lazy(() => import("../specific/Search"));
 const NewGroupDialog = lazy(() => import("../specific/NewGroup"));
 const NotificationDialog = lazy(() => import("../specific/Notification"));
 
-const Header = () => {
+const Header = ({handleProfileToggle}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { isSearch, isNotification,isNewGroup } = useSelector((state) => state.misc);
-  const { notificationCount } = useSelector((state) => state.misc);
+  const { notificationCount } = useSelector((state) => state.chat);
 
 
   const handleMobile = () => dispatch(setIsMobile(true));
@@ -57,17 +53,7 @@ const Header = () => {
   const navigateToGroup = () => {
     navigate("/groups");
   };
-  const logoutHandler = async () => {
-    try {
-      const { data } = await axios.get(`${server}/api/v1/user/logout`, {
-        withCredentials: true,
-      });
-      dispatch(userNotExists());
-      toast.success(data.message);
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Logout failed");
-    }
-  };
+  
 
   return (
     <>
@@ -76,9 +62,10 @@ const Header = () => {
           <Toolbar>
             <Typography
               variant="h6"
-              sx={{ display: { xs: "none", sm: "block" } }}
+              sx={{ display: { xs: "none", sm: "block" },
+            fontFamily:'cursive',fontSize:'1.5rem',fontWeight:'bold' }}
             >
-              ChatAPP
+              VibeChat
             </Typography>
             <Box sx={{ display: { xs: "block", sm: "none" } }}>
               <IconButton color="inherit" onClick={handleMobile}>
@@ -108,10 +95,10 @@ const Header = () => {
                 onClick={openNotification}
                 value={notificationCount}
               />
-              <IconBtn
-                title="Logout"
-                icon={<LogoutIcon />}
-                onClick={logoutHandler}
+               <IconBtn
+                title="profile"
+                icon={<ProfileIcon />}
+                onClick={handleProfileToggle}
               />
             </Box>
           </Toolbar>

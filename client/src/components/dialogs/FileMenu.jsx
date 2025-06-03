@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useSendAttachmentsMutation } from "../../redux/api/api";
 import { setIsFileMenu, setUploadingLoader } from "../../redux/reducers/misc";
 
-const FileMenu = ({ anchorE1, chatId }) => {
+const FileMenu = ({ anchorEl, chatId }) => {
   const { isFileMenu } = useSelector((state) => state.misc);
 
   const dispatch = useDispatch();
@@ -45,7 +45,6 @@ const FileMenu = ({ anchorE1, chatId }) => {
 
     try {
       const myForm = new FormData();
-
       myForm.append("chatId", chatId);
       files.forEach((file) => myForm.append("files", file));
 
@@ -54,74 +53,78 @@ const FileMenu = ({ anchorE1, chatId }) => {
       if (res.data) toast.success(`${key} sent successfully`, { id: toastId });
       else toast.error(`Failed to send ${key}`, { id: toastId });
 
-      // Fetching Here
     } catch (error) {
-      toast.error(error, { id: toastId });
+      toast.error(error.message || "Something went wrong", { id: toastId });
     } finally {
       dispatch(setUploadingLoader(false));
     }
   };
 
   return (
-    <Menu anchorEl={anchorE1} open={isFileMenu} onClose={closeFileMenu}>
-      <div
-        style={{
+    <Menu
+      anchorEl={anchorEl}
+      open={isFileMenu}
+      onClose={closeFileMenu}
+      PaperProps={{
+        sx: {
+          borderRadius: "1rem",
           width: "10rem",
-        }}
-      >
-        <MenuList>
-          <MenuItem onClick={selectImage}>
-              <ImageIcon />
-            <ListItemText style={{ marginLeft: "0.5rem" }}>Image</ListItemText>
-            <input
-              type="file"
-              multiple
-              accept="image/png, image/jpeg, image/gif"
-              style={{ display: "none" }}
-              onChange={(e) => fileChangeHandler(e, "Images")}
-              ref={imageRef}
-            />
-          </MenuItem>
-          <MenuItem onClick={selectAudio}>
-              <AudioFileIcon />
-            <ListItemText style={{ marginLeft: "0.5rem" }}>Audio</ListItemText>
-            <input
-              type="file"
-              multiple
-              accept="audio/mpeg, audio/wav"
-              style={{ display: "none" }}
-              onChange={(e) => fileChangeHandler(e, "Audios")}
-              ref={audioRef}
-            />
-          </MenuItem>
+        },
+      }}
+    >
+      <MenuList>
+        <MenuItem onClick={selectImage}>
+          <ImageIcon />
+          <ListItemText sx={{ ml: "0.5rem" }}>Image</ListItemText>
+          <input
+            type="file"
+            multiple
+            accept="image/png, image/jpeg, image/gif"
+            style={{ display: "none" }}
+            onChange={(e) => fileChangeHandler(e, "Images")}
+            ref={imageRef}
+          />
+        </MenuItem>
 
-          <MenuItem onClick={selectVideo}>
-              <VideoFileIcon />
-            <ListItemText style={{ marginLeft: "0.5rem" }}>Video</ListItemText>
-            <input
-              type="file"
-              multiple
-              accept="video/mp4, video/webm, video/ogg"
-              style={{ display: "none" }}
-              onChange={(e) => fileChangeHandler(e, "Videos")}
-              ref={videoRef}
-            />
-          </MenuItem>
+        <MenuItem onClick={selectAudio}>
+          <AudioFileIcon />
+          <ListItemText sx={{ ml: "0.5rem" }}>Audio</ListItemText>
+          <input
+            type="file"
+            multiple
+            accept="audio/mpeg, audio/wav"
+            style={{ display: "none" }}
+            onChange={(e) => fileChangeHandler(e, "Audios")}
+            ref={audioRef}
+          />
+        </MenuItem>
 
-          <MenuItem onClick={selectFile}>
-              <UploadFileIcon />
-            <ListItemText style={{ marginLeft: "0.5rem" }}>File</ListItemText>
-            <input
-              type="file"
-              multiple
-              accept="*"
-              style={{ display: "none" }}
-              onChange={(e) => fileChangeHandler(e, "Files")}
-              ref={fileRef}
-            />
-          </MenuItem>
-        </MenuList>
-      </div>
+        <MenuItem onClick={selectVideo}>
+          <VideoFileIcon />
+          <ListItemText sx={{ ml: "0.5rem" }}>Video</ListItemText>
+          <input
+            type="file"
+            multiple
+            accept="video/mp4, video/webm, video/ogg"
+            style={{ display: "none" }}
+            onChange={(e) => fileChangeHandler(e, "Videos")}
+            ref={videoRef}
+          />
+        </MenuItem>
+
+        <MenuItem onClick={selectFile}>
+          <UploadFileIcon />
+          <ListItemText sx={{ ml: "0.5rem" }}>File</ListItemText>
+          <input
+            type="file"
+            multiple
+            accept="*"
+            style={{ display: "none" }}
+            onChange={(e) => fileChangeHandler(e, "Files")}
+            ref={fileRef}
+          />
+        </MenuItem>
+      </MenuList>
     </Menu>
   );
 };

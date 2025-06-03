@@ -1,44 +1,41 @@
-import React, { Suspense, useEffect, useState } from "react";
-import {
-  Grid,
-  IconButton,
-  Tooltip,
-  Box,
-  Drawer,
-  Stack,
-  Typography,
-  Avatar,
-  TextField,
-  Button,
-  Backdrop,
-  Skeleton,
-  CircularProgress,
-} from "@mui/material";
 import {
   Add as AddIcon,
-  ExitToApp as ExitIcon,
   Done as DoneIcon,
   Edit as EditIcon,
+  ExitToApp as ExitIcon,
+  KeyboardBackspace as KeyboardBackspaceIcon,
   Menu as MenuIcon,
-  Add,
 } from "@mui/icons-material";
-import { KeyboardBackspace as KeyboardBackspaceIcon } from "@mui/icons-material";
-import { Link } from "../components/styles/StyledComponents";
+import {
+  Backdrop,
+  Box,
+  Button,
+  CircularProgress,
+  Drawer,
+  Grid,
+  IconButton,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import React, { Suspense, useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { LayoutLoader } from "../components/layout/Loaders.jsx";
 import AvatarCard from "../components/shared/AvatarCard.jsx";
 import UserItem from "../components/shared/UserItem.jsx";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link } from "../components/styles/StyledComponents";
+import { useAsyncMutation, useErrors } from "../hooks/hook.jsx";
 import {
-  useAddGroupMembersMutation,
   useChatDetailsQuery,
   useDeleteChatMutation,
   useMyGroupsQuery,
   useRemoveGroupMemberMutation,
   useRenameGroupMutation,
 } from "../redux/api/api.js";
-import { useAsyncMutation, useErrors } from "../hooks/hook.jsx";
-import { LayoutLoader } from "../components/layout/Loaders.jsx";
-import { useDispatch, useSelector } from "react-redux";
 import { setIsAddMember } from "../redux/reducers/misc.js";
+import { GreyBlueGradient, orangeLight,orange } from "../constants/color.js";
 const ConfirmLeaveDialog = React.lazy(() =>
   import("../components/dialogs/ConfirmLeaveDialog.jsx")
 );
@@ -207,47 +204,78 @@ const Group = () => {
   );
 
   const ButtonGroup = (
-    <Stack
-      direction={{
-        sm: "row",
-        xs: "column-reverse",
-      }}
-      spacing={"1rem"}
-      p={{
-        sm: "1rem",
-        xs: "0rem",
-        md: "1rem 4rem",
+  <Stack
+    direction={{
+      sm: "row",
+      xs: "column-reverse",
+    }}
+    spacing={"1rem"}
+    p={{
+      sm: "1rem",
+      xs: "0rem",
+      md: "1rem 4rem",
+    }}
+  >
+    <Button
+      variant="contained"
+      startIcon={<ExitIcon />}
+      onClick={openConfirmLeave}
+      sx={{
+        fontSize: "1rem",
+        py: 1.5,
+        px: 3,
+        borderRadius: "2rem",
+        fontWeight: "bold",
+        color: "white",
+        background: "linear-gradient(135deg, #ff4b2b, #ff416c)",
+        backgroundSize: "200% 200%",
+        transition: "all 0.3s ease-in-out",
+        "&:hover": {
+          backgroundPosition: "right center",
+          transform: "scale(1.05)",
+          boxShadow: "0 0 10px rgba(255, 65, 108, 0.6)",
+        },
       }}
     >
-      <Button
-        variant="outlined"
-        color="error"
-        startIcon={<ExitIcon />}
-        onClick={openConfirmLeave}
-      >
-        Leave Group
-      </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleAddMembers}
-      >
-        Add Members
-      </Button>
-    </Stack>
-  );
+      Leave Group
+    </Button>
+
+    <Button
+      variant="contained"
+      startIcon={<AddIcon />}
+      onClick={handleAddMembers}
+      sx={{
+        fontSize: "1rem",
+        py: 1.5,
+        px: 3,
+        borderRadius: "2rem",
+        fontWeight: "bold",
+        color: "white",
+        background: "linear-gradient(135deg, #36d1dc, #5b86e5)",
+        backgroundSize: "200% 200%",
+        transition: "all 0.3s ease-in-out",
+        "&:hover": {
+          backgroundPosition: "right center",
+          transform: "scale(1.05)",
+          boxShadow: "0 0 10px rgba(91, 134, 229, 0.6)",
+        },
+      }}
+    >
+      Add Members
+    </Button>
+  </Stack>
+);
 
   //-----------------------------------------
 
   return myGroups.isLoading ? (
     <LayoutLoader />
   ) : (
-    <Grid container height={"100vh"}>
+    <Grid container height={"100vh"} >
       <Grid item sm={4} sx={{ display: { xs: "none", sm: "block" } }}>
         <GroupList myGroups={myGroups?.data?.groups} chatId={chatId} />
       </Grid>
-      <Grid
+      <Grid 
         item
         xs={12}
         sm={8}
@@ -257,6 +285,7 @@ const Group = () => {
           alignItems: "center",
           position: "relative",
           padding: "1rem 3rem",
+          background: orangeLight,
         }}
       >
         {IconBtns}
@@ -267,8 +296,13 @@ const Group = () => {
               margin={"2rem"}
               alignSelf={"flex-start"}
               variant="body1"
+              sx={{
+                fontWeight: "bold",
+                color: "rgba(0,0,0,0.8)",
+                fontSize: "1.7rem",
+              }}
             >
-              Members
+              Members :
             </Typography>
             <Stack
               maxWidth={"45rem"}
@@ -296,6 +330,7 @@ const Group = () => {
                       boxShadow: "0 0 0.5rem  rgba(0,0,0,0.2)",
                       padding: "1rem 2rem",
                       borderRadius: "1rem",
+                      backgroundColor: "rgba(255, 255, 255, 0.5)",
                     }}
                     handler={removeMemberHandler}
                   />
@@ -346,7 +381,7 @@ const GroupList = ({ w = "100%", myGroups = [], chatId }) => {
     <Stack
       width={w}
       sx={{
-        backgroundColor: "bisque",
+        background: GreyBlueGradient,
         height: "100vh",
         overflow: "auto",
         padding: "1rem",
@@ -357,7 +392,18 @@ const GroupList = ({ w = "100%", myGroups = [], chatId }) => {
           <GroupsListItem key={group._id} group={group} chatId={chatId} />
         ))
       ) : (
-        <Typography textAlign={"center"} padding="1rem">
+        <Typography
+          p={"2rem"}
+          variant="h4"
+          textAlign={"center"}
+          sx={{
+            color: "white",
+            fontWeight: "900",
+            fontSize: "3rem",
+            fontFamily: "cursive",
+            letterSpacing: "1px",
+          }}
+        >
           No groups
         </Typography>
       )}
@@ -376,9 +422,22 @@ const GroupsListItem = ({ group, chatId }) => {
         }
       }}
     >
-      <Stack direction={"row"} alignItems={"center"} spacing={"1rem"}>
+      <Stack
+        direction={"row"}
+        alignItems={"center"}
+        spacing={"1.5rem"}
+        sx={{
+          padding: "0.5rem 1rem",
+          borderRadius: "0.5rem",
+          ":hover": { backgroundColor: "rgba(255, 255, 255, 0.1)" },
+        }}
+      >
         <AvatarCard avatar={avatar} />
-        <Typography>{name}</Typography>
+        <Typography sx={{
+          fontWeight: "bold",
+          fontSize: "1.2rem",
+          color: "rgba(255, 255, 255, 0.9)",
+        }}>{name}</Typography>
       </Stack>
     </Link>
   );

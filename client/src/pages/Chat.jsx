@@ -8,7 +8,7 @@ import FileMenu from "../components/dialogs/FileMenu";
 import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/StyledComponents";
-import { greyColor, orange } from "../constants/color";
+import { greyColor, orange, orangeLight } from "../constants/color";
 import {
   ALERT,
   CHAT_JOINED,
@@ -26,7 +26,7 @@ import { setIsFileMenu } from "../redux/reducers/misc.js";
 import { removeNewMessagesAlert } from "../redux/reducers/chat.js";
 import { TypingLoader } from "../components/layout/Loaders.jsx";
 import { useNavigate } from "react-router-dom";
-
+import bg1 from "../assets/annie-spratt-zA7I5BtFbvw-unsplash.jpg";
 const ChatComponent = ({ chatId, user }) => {
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
@@ -85,9 +85,8 @@ const ChatComponent = ({ chatId, user }) => {
   };
 
   const handleFileMenuOpen = (e) => {
-    e.preventDefault();
-    dispatch(setIsFileMenu(true));
     setFileMenuAnchor(e.currentTarget);
+    dispatch(setIsFileMenu(true));
   };
 
   const handleChatSubmit = (e) => {
@@ -184,7 +183,14 @@ const ChatComponent = ({ chatId, user }) => {
         spacing={"1rem"}
         bgcolor={greyColor}
         height={"90%"}
-        sx={{ overflowY: "auto", overflowX: "hidden" }}
+        sx={{
+          overflowY: "auto",
+          overflowX: "hidden",
+          backgroundImage: `url(${bg1})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
       >
         {allMessages.map((message) => (
           <MessageComponent key={message._id} message={message} user={user} />
@@ -206,6 +212,7 @@ const ChatComponent = ({ chatId, user }) => {
           padding={"1rem"}
           alignItems={"center"}
           position={"relative"}
+          backgroundColor={orangeLight}
         >
           <IconButton
             sx={{
