@@ -1,7 +1,7 @@
 import { ErrorHandler } from "../utils/utility.js";
 import { VIBECHAT_TOKEN } from "../constants/config.js";
 import jwt from "jsonwebtoken";
-import { User } from "../models/User.js";
+import { User } from "../models/User1.js";
 
 const isAuthenticated = (req, res, next) => {
   const token = req.cookies[VIBECHAT_TOKEN];

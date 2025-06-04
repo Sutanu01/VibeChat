@@ -1,6 +1,6 @@
-import { User } from "../models/User.js";
-import { Chat } from "../models/Chat.js";
-import { Request } from "../models/Request.js";
+import { User } from "../models/User1.js";
+import { Chat } from "../models/Chat1.js";
+import { Request } from "../models/Request1.js";
 import { compare } from "bcrypt";
 import { cookieOptions, emitEvent, sendToken,uploadFilesToCloudinary } from "../utils/features.js";
 import { TryCatch } from "../middlewares/error.js";
