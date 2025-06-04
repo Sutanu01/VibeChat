@@ -25,7 +25,7 @@ import {
 } from "./constants/event.js";
 import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
-import { Message } from "./models/Message1.js";
+import { Message } from "./models/Message.js";
 
 export const envMode = process.env.NODE_ENV.trim() || "PRODUCTION";
 const MONGO_URI = process.env.MONGO_URI;
