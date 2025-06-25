@@ -1,10 +1,10 @@
 import {
-  Add as AddIcon,
-  Group as GroupIcon,
+  Groups as GroupsIcon,
+  Settings as SettingsIcon,
   Menu as MenuIcon,
   Notifications as NotificationIcon,
   AccountCircle as ProfileIcon,
-  Search as SearchIcon
+  PersonAdd as PersonAddIcon
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -75,18 +75,18 @@ const Header = ({handleProfileToggle}) => {
             <Box sx={{ flexGrow: 1 }} />
             <Box>
               <IconBtn
-                title="Search"
-                icon={<SearchIcon />}
+                title="Add Friend"
+                icon={<PersonAddIcon />}
                 onClick={openSearch}
               />
               <IconBtn
                 title="New Group"
-                icon={<AddIcon />}
+                icon={<GroupsIcon />}
                 onClick={openNewGroup}
               />
               <IconBtn
                 title="Manage Groups"
-                icon={<GroupIcon />}
+                icon={<SettingsIcon />}
                 onClick={navigateToGroup}
               />
               <IconBtn
