@@ -99,7 +99,8 @@ const Login = () => {
   return (
     <div
       style={{
-        backgroundColor: "#2d0036", // lighter background tone
+        background:
+          "radial-gradient(circle at 20% 20%, rgba(78,205,196,0.18), transparent 34%), radial-gradient(circle at 80% 20%, rgba(255,195,113,0.14), transparent 34%), #0c111b",
         minHeight: "100vh",
         display: "flex",
         alignItems: "center",
@@ -113,9 +114,10 @@ const Login = () => {
             p: 4,
             borderRadius: "16px",
             backdropFilter: "blur(10px)",
-            backgroundColor: "#1a0023", // dark bg same as NotFound
-            color: "#fff",
-            boxShadow: "0 8px 32px rgba(111, 0, 168, 0.6)", // purple shadow
+            backgroundColor: "rgba(15, 23, 37, 0.9)",
+            color: "#e6edf7",
+            boxShadow: "0 16px 40px rgba(0, 0, 0, 0.35)",
+            border: "1px solid rgba(255,255,255,0.12)",
             width: "100%",
           }}
         >
@@ -124,7 +126,7 @@ const Login = () => {
             align="center"
             mb={3}
             fontWeight={600}
-            sx={{ color: "#b39ddb" }}
+            sx={{ color: "#e6edf7" }}
           >
             {isLogin ? "Welcome Back 👋" : "Create an Account"}
           </Typography>
@@ -184,10 +186,10 @@ const Login = () => {
                   onChange={name.changeHandler}
                   required
                   sx={{
-                    backgroundColor: "#2d0036",
+                    backgroundColor: "rgba(255,255,255,0.05)",
                     borderRadius: "8px",
-                    input: { color: "#fff" },
-                    "& .MuiInputLabel-root": { color: "#b39ddb" },
+                    input: { color: "#e6edf7" },
+                    "& .MuiInputLabel-root": { color: "#9db0cb" },
                   }}
                 />
 
@@ -200,10 +202,10 @@ const Login = () => {
                   onChange={bio.changeHandler}
                   required
                   sx={{
-                    backgroundColor: "#2d0036",
+                    backgroundColor: "rgba(255,255,255,0.05)",
                     borderRadius: "8px",
-                    input: { color: "#fff" },
-                    "& .MuiInputLabel-root": { color: "#b39ddb" },
+                    input: { color: "#e6edf7" },
+                    "& .MuiInputLabel-root": { color: "#9db0cb" },
                   }}
                 />
               </>
@@ -218,10 +220,10 @@ const Login = () => {
               onChange={username.changeHandler}
               required
               sx={{
-                backgroundColor: "#2d0036",
+                backgroundColor: "rgba(255,255,255,0.05)",
                 borderRadius: "8px",
-                input: { color: "#fff" },
-                "& .MuiInputLabel-root": { color: "#b39ddb" },
+                input: { color: "#e6edf7" },
+                "& .MuiInputLabel-root": { color: "#9db0cb" },
               }}
             />
             {username.error && (
@@ -240,10 +242,10 @@ const Login = () => {
               onChange={password.changeHandler}
               required
               sx={{
-                backgroundColor: "#2d0036",
+                backgroundColor: "rgba(255,255,255,0.05)",
                 borderRadius: "8px",
-                input: { color: "#fff" },
-                "& .MuiInputLabel-root": { color: "#b39ddb" },
+                input: { color: "#e6edf7" },
+                "& .MuiInputLabel-root": { color: "#9db0cb" },
               }}
             />
 
@@ -254,15 +256,16 @@ const Login = () => {
               sx={{
                 mt: 2,
                 fontWeight: "bold",
-                backgroundColor: "#6f00a8",
-                "&:hover": { backgroundColor: "#5a0087" },
+                color: "#052928",
+                backgroundColor: "#4ecdc4",
+                "&:hover": { backgroundColor: "#8ae3dc" },
               }}
               disabled={isLoading}
             >
               {isLogin ? "Login" : "Sign Up"}
             </Button>
 
-            <Typography textAlign="center" mt={2} sx={{ color: "#b39ddb" }}>
+            <Typography textAlign="center" mt={2} sx={{ color: "#9db0cb" }}>
               OR
             </Typography>
 
@@ -272,11 +275,11 @@ const Login = () => {
               onClick={toggleLogin}
               sx={{
                 mt: 1,
-                color: "#6f00a8",
-                borderColor: "#6f00a8",
+                color: "#4ecdc4",
+                borderColor: "#4ecdc4",
                 "&:hover": {
-                  borderColor: "#5a0087",
-                  backgroundColor: "rgba(111, 0, 168, 0.1)",
+                  borderColor: "#8ae3dc",
+                  backgroundColor: "rgba(78, 205, 196, 0.12)",
                 },
               }}
               disabled={isLoading}

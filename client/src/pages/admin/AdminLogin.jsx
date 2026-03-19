@@ -36,7 +36,8 @@ const AdminLogin = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #1a0023 0%, #4b007d 50%, #2e0053 100%)",
+        background:
+          "radial-gradient(circle at 18% 22%, rgba(78,205,196,0.16), transparent 34%), radial-gradient(circle at 80% 20%, rgba(255,195,113,0.14), transparent 34%), #0c111b",
       }}
     >
       <Container
@@ -56,16 +57,17 @@ const AdminLogin = () => {
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            backgroundColor: "#1a0023", // dark purple bg
-            color: "#fff",
+            backgroundColor: "rgba(15, 23, 37, 0.9)",
+            color: "#e6edf7",
             borderRadius: "16px",
-            boxShadow: "0 8px 32px rgba(111, 0, 168, 0.6)", // purple glow
+            boxShadow: "0 16px 40px rgba(0,0,0,0.35)",
+            border: "1px solid rgba(255,255,255,0.12)",
             width: "100%",
           }}
         >
           <Typography
             variant="h5"
-            sx={{ mb: 2, fontWeight: "bold", color: "#b39ddb" }}
+            sx={{ mb: 2, fontWeight: "bold", color: "#e6edf7" }}
           >
             Admin Login
           </Typography>
@@ -86,18 +88,18 @@ const AdminLogin = () => {
               value={secretKey.value}
               onChange={secretKey.changeHandler}
               sx={{
-                backgroundColor: "#2d0036",
+                backgroundColor: "rgba(255,255,255,0.05)",
                 borderRadius: "8px",
-                input: { color: "#fff" },
-                "& .MuiInputLabel-root": { color: "#b39ddb" },
+                input: { color: "#e6edf7" },
+                "& .MuiInputLabel-root": { color: "#9db0cb" },
                 "& .MuiFilledInput-root:before": {
-                  borderBottomColor: "#6f00a8",
+                  borderBottomColor: "#4ecdc4",
                 },
                 "& .MuiFilledInput-root:hover:before": {
-                  borderBottomColor: "#b39ddb",
+                  borderBottomColor: "#8ae3dc",
                 },
                 "& .MuiFilledInput-root:after": {
-                  borderBottomColor: "#b39ddb",
+                  borderBottomColor: "#8ae3dc",
                 },
               }}
             />
@@ -106,8 +108,9 @@ const AdminLogin = () => {
               sx={{
                 marginTop: "1.5rem",
                 fontWeight: "bold",
-                backgroundColor: "#6f00a8",
-                "&:hover": { backgroundColor: "#5a0087" },
+                color: "#052928",
+                backgroundColor: "#4ecdc4",
+                "&:hover": { backgroundColor: "#8ae3dc" },
               }}
               variant="contained"
               type="submit"

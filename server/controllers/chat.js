@@ -104,23 +104,35 @@ const addMembers = TryCatch(async (req, res, next) => {
   if (chat.creator.toString() !== req.user.toString()) {
     return next(new ErrorHandler("Only creator can add members", 403));
   }
-  const allNewMembersPromise = members.map((memberId) =>
-    User.findById(memberId, "name")
+  const allNewMembers = await Promise.all(
+    members.map((memberId) => User.findById(memberId, "name"))
   );
 
-  const allNewMembers = await Promise.all(allNewMembersPromise);
-  const uniqueMembers = allNewMembers
-    .filter(({ i }) => !chat.members.includes(i._id.toString()))
-    .map(({ i }) => i._id);
+  if (allNewMembers.some((member) => !member)) {
+    return next(new ErrorHandler("One or more members not found", 404));
+  }
 
-  chat.members.push(...allNewMembers.map(({ i }) => i._id));
+  const existingMembers = new Set(chat.members.map((id) => id.toString()));
+  const seen = new Set();
+  const uniqueMembers = allNewMembers.filter((member) => {
+    const id = member._id.toString();
+    if (existingMembers.has(id) || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+
+  if (uniqueMembers.length < 1) {
+    return next(new ErrorHandler("All selected users are already members", 400));
+  }
+
+  chat.members.push(...uniqueMembers.map((member) => member._id));
 
   if (chat.members.length > 100) {
     return next(new ErrorHandler("Group member limit is reached", 400));
   }
   await chat.save();
 
-  const allUsersName = allNewMembers.map(({ name }) => name).join(", ");
+  const allUsersName = uniqueMembers.map(({ name }) => name).join(", ");
   emitEvent(req, ALERT, chat.members, {
     message: `${allUsersName} added to the group`,
     chatId,
@@ -134,7 +146,11 @@ const addMembers = TryCatch(async (req, res, next) => {
 });
 
 const removeMember = TryCatch(async (req, res, next) => {
-  const { chatId, memberId } = req.body;
+  const { chatId, memberId, userId } = req.body;
+  const targetMemberId = memberId || userId;
+  if (!targetMemberId) {
+    return next(new ErrorHandler("Member ID is required", 400));
+  }
   const chat = await Chat.findById(chatId);
   if (!chat) {
     return next(new ErrorHandler("Chat not found", 404));
@@ -146,7 +162,7 @@ const removeMember = TryCatch(async (req, res, next) => {
     return next(new ErrorHandler("Only creator can remove members", 403));
   }
   const member = chat.members.find(
-    (mem) => mem._id.toString() === memberId.toString()
+    (mem) => mem._id.toString() === targetMemberId.toString()
   );
   if (!member) {
     return next(new ErrorHandler("Member not found", 404));
@@ -159,12 +175,13 @@ const removeMember = TryCatch(async (req, res, next) => {
   }
 
   const allChatMembers = chat.members.map((i) => i.toString());
+  const memberDoc = await User.findById(targetMemberId, "name");
   chat.members = chat.members.filter(
-    (mem) => mem._id.toString() !== memberId.toString()
+    (mem) => mem._id.toString() !== targetMemberId.toString()
   );
   await chat.save();
   emitEvent(req, ALERT, chat.members, {
-    message: `${member.name} removed from the group`,
+    message: `${memberDoc?.name || "A member"} removed from the group`,
     chatId,
   });
   emitEvent(req, REFETCH_CHATS, allChatMembers);
@@ -198,7 +215,7 @@ const leaveGroup = TryCatch(async (req, res, next) => {
   chat.members = remainingMembers;
 
   const [user] = await Promise.all([
-    user.findById(req.user, "name"),
+    User.findById(req.user, "name"),
     chat.save(),
   ]);
 

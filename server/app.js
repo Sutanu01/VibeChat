@@ -27,7 +27,7 @@ import { v4 as uuid } from "uuid";
 import { getSockets } from "./lib/helper.js";
 import { Message } from "./models/Message.js";
 
-export const envMode = process.env.NODE_ENV.trim() || "PRODUCTION";
+export const envMode = (process.env.NODE_ENV || "PRODUCTION").trim();
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT || 3000;
 export const CLIENT_URL = process.env.CLIENT_URL;
@@ -36,7 +36,6 @@ const onlineUsers = new Set();
 
 const app = express();
 app.use(express.json());
-app.use(errorMiddleWare);
 app.use(cookieParser());
 app.use(cors(corsOptions));
 
@@ -62,6 +61,8 @@ app.use("/api/v1/admin", adminRoute);
 app.get("/", (req, res) => {
   res.send("Server is running");
 });
+
+app.use(errorMiddleWare);
 
 io.use((socket, next) => {
   cookieParser()(

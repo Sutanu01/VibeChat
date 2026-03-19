@@ -8,7 +8,7 @@ import FileMenu from "../components/dialogs/FileMenu";
 import AppLayout from "../components/layout/AppLayout";
 import MessageComponent from "../components/shared/MessageComponent";
 import { InputBox } from "../components/styles/StyledComponents";
-import { greyColor, orange, orangeLight } from "../constants/color";
+import { greyColor, orange } from "../constants/color";
 import {
   ALERT,
   CHAT_JOINED,
@@ -26,7 +26,6 @@ import { setIsFileMenu } from "../redux/reducers/misc.js";
 import { removeNewMessagesAlert } from "../redux/reducers/chat.js";
 import { TypingLoader } from "../components/layout/Loaders.jsx";
 import { useNavigate } from "react-router-dom";
-import bg1 from "../assets/annie-spratt-zA7I5BtFbvw-unsplash.jpg";
 const ChatComponent = ({ chatId, user }) => {
   const containerRef = useRef(null);
   const bottomRef = useRef(null);
@@ -69,6 +68,8 @@ const ChatComponent = ({ chatId, user }) => {
 
   const messageOnChangeHandler = (e) => {
     setMessage(e.target.value);
+    if (!members) return;
+
     if (!typing) {
       socket.emit(START_TYPING, { members, chatId });
       setTyping(true);
@@ -81,7 +82,7 @@ const ChatComponent = ({ chatId, user }) => {
     typingTimeout.current = setTimeout(() => {
       socket.emit(STOP_TYPING, { members, chatId });
       setTyping(false);
-    }, [2000]);
+    }, 2000);
   };
 
   const handleFileMenuOpen = (e) => {
@@ -121,16 +122,20 @@ const ChatComponent = ({ chatId, user }) => {
   );
 
   useEffect(() => {
+    if (!members?.length || !user?._id || !chatId) return;
+
     socket.emit(CHAT_JOINED, { userId: user._id, members });
     dispatch(removeNewMessagesAlert(chatId));
+
     return () => {
       setMessages([]);
       setMessage("");
       setOldMessages([]);
       setPage(1);
+      if (typingTimeout.current) clearTimeout(typingTimeout.current);
       socket.emit(CHAT_LEAVED, { userId: user._id, members });
     };
-  }, [chatId]);
+  }, [chatId, members, user?._id, dispatch, setOldMessages, socket]);
 
   useEffect(() => {
     if (bottomRef.current) {
@@ -186,10 +191,9 @@ const ChatComponent = ({ chatId, user }) => {
         sx={{
           overflowY: "auto",
           overflowX: "hidden",
-          backgroundImage: `url(${bg1})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+          background:
+            "radial-gradient(circle at 15% 18%, rgba(78,205,196,0.12), transparent 34%), radial-gradient(circle at 82% 20%, rgba(255,195,113,0.1), transparent 34%), #0f1725",
+          borderTop: "1px solid rgba(255,255,255,0.08)",
         }}
       >
         {allMessages.map((message) => (
@@ -212,13 +216,15 @@ const ChatComponent = ({ chatId, user }) => {
           padding={"1rem"}
           alignItems={"center"}
           position={"relative"}
-          backgroundColor={orangeLight}
+          backgroundColor={"rgba(10, 16, 26, 0.92)"}
+          sx={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
         >
           <IconButton
             sx={{
               position: "absolute",
               left: "1.5rem",
               rotate: "30deg",
+              color: "#8fa8c8",
             }}
             onClick={handleFileMenuOpen}
           >
@@ -233,11 +239,11 @@ const ChatComponent = ({ chatId, user }) => {
             type="submit"
             sx={{
               bgcolor: orange,
-              color: "white",
+              color: "#032322",
               marginLeft: "1rem",
-              padding: "0.5rem",
+              padding: "0.6rem",
               "&:hover": {
-                bgcolor: "error.dark",
+                bgcolor: "#8ae3dc",
               },
             }}
           >

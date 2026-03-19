@@ -35,7 +35,7 @@ import {
   useRenameGroupMutation,
 } from "../redux/api/api.js";
 import { setIsAddMember } from "../redux/reducers/misc.js";
-import { GreyBlueGradient, orangeLight,orange } from "../constants/color.js";
+import { GreyBlueGradient } from "../constants/color.js";
 const ConfirmLeaveDialog = React.lazy(() =>
   import("../components/dialogs/ConfirmLeaveDialog.jsx")
 );
@@ -285,7 +285,8 @@ const Group = () => {
           alignItems: "center",
           position: "relative",
           padding: "1rem 3rem",
-          background: orangeLight,
+          background:
+            "radial-gradient(circle at 20% 15%, rgba(78,205,196,0.14), transparent 35%), #101a2d",
         }}
       >
         {IconBtns}
@@ -298,7 +299,7 @@ const Group = () => {
               variant="body1"
               sx={{
                 fontWeight: "bold",
-                color: "rgba(0,0,0,0.8)",
+                color: "#dbe6f7",
                 fontSize: "1.7rem",
               }}
             >
@@ -327,10 +328,11 @@ const Group = () => {
                     key={i._id}
                     isAdded={true}
                     styling={{
-                      boxShadow: "0 0 0.5rem  rgba(0,0,0,0.2)",
+                      boxShadow: "0 10px 20px rgba(0,0,0,0.22)",
                       padding: "1rem 2rem",
                       borderRadius: "1rem",
-                      backgroundColor: "rgba(255, 255, 255, 0.5)",
+                      backgroundColor: "rgba(255, 255, 255, 0.05)",
+                      border: "1px solid rgba(255,255,255,0.12)",
                     }}
                     handler={removeMemberHandler}
                   />
@@ -342,13 +344,13 @@ const Group = () => {
         )}
       </Grid>
       {isAddMember && (
-        <Suspense fallback={<Backdrop open />}>
+        <Suspense fallback={<Backdrop open><CircularProgress color="inherit" /></Backdrop>}>
           <AddMemberDialog ChatId={chatId} />
         </Suspense>
       )}
       {/* Confirm Leave Dialog */}
       {confirmLeaveDialog && (
-        <Suspense fallback={<Backdrop open />}>
+        <Suspense fallback={<Backdrop open><CircularProgress color="inherit" /></Backdrop>}>
           <ConfirmLeaveDialog
             handleClose={closeConfirmLeave}
             open={confirmLeaveDialog}

@@ -6,9 +6,9 @@ import { getBase64, getSockets } from "../lib/helper.js";
 
 const cookieOptions = {
   maxAge: 15 * 24 * 60 * 60 * 1000,
-  sameSite: "none",
+  sameSite: process.env.NODE_ENV === "PRODUCTION" ? "none" : "lax",
   httpOnly: true,
-  secure: true,
+  secure: process.env.NODE_ENV === "PRODUCTION",
 };
 
 const connectToMongo = (uri) => {
@@ -33,7 +33,6 @@ const sendToken = (res, user, code, message) => {
   );
   return res.status(code).cookie("vibechat-token", token, cookieOptions).json({
     success: true,
-    token,
     message,
     user,
   });
@@ -82,8 +81,14 @@ const uploadFilesToCloudinary = async (files = []) => {
   }
 };
 
-const deleteFilesFromCloudinary = async (public_ids) => {
-  //
+const deleteFilesFromCloudinary = async (public_ids = []) => {
+  if (!public_ids.length) return;
+
+  try {
+    await Promise.all(public_ids.map((public_id) => cloudinary.uploader.destroy(public_id)));
+  } catch (error) {
+    throw new Error("Error deleting files from Cloudinary: " + error);
+  }
 };
 
 export {

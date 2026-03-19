@@ -12,7 +12,7 @@ import { userNotExists } from "../../redux/reducers/auth";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { server } from "../../constants/config";
-import {orange} from "../../constants/color";
+import { orange } from "../../constants/color";
 const Profile = ({ user }) => {
   const dispatch = useDispatch();
   const logoutHandler = async () => {
@@ -27,20 +27,28 @@ const Profile = ({ user }) => {
     }
   };
   return (
-    <Box sx={{
-    width: "100%",
-    height: "100%",
-    backgroundColor: orange,
-    borderRadius: "10px",
-  }}>
-    <Stack spacing={"2rem"} direction={"column"} alignItems={"center"}
+    <Box
       sx={{
+        width: "100%",
+        height: "100%",
+        background:
+          "radial-gradient(circle at 20% 20%, rgba(78,205,196,0.13), transparent 40%), #101a2d",
+        border: "1px solid rgba(255,255,255,0.08)",
+        borderRadius: "14px",
+      }}
+    >
+      <Stack
+        spacing={"2rem"}
+        direction={"column"}
+        alignItems={"center"}
+        sx={{
       padding: "2rem",
-      color: "white",
+          color: "#dbe6f7",
       display: "flex",
       justifyContent: "space-between",
       height: "100%",
-    }}>
+        }}
+      >
       <Avatar
         src={transformImage(user?.avatar?.url)}
         sx={{
@@ -48,7 +56,8 @@ const Profile = ({ user }) => {
           height: 200,
           objectFit: "contain",
           marginBottom: "1rem",
-          border: "5px solid white",
+          border: "4px solid rgba(78, 205, 196, 0.7)",
+          boxShadow: "0 0 30px rgba(78,205,196,0.26)",
         }}
       />
       <ProfileCard heading={"Bio"} text={user?.bio} />
@@ -71,23 +80,19 @@ const Profile = ({ user }) => {
           borderRadius: "2rem",
           px: 4,
           py: 1,
-          color: "white",
-          background:
-            "linear-gradient(270deg, #ff6a00, #ee0979, #ff6a00, #ee0979)",
-          backgroundSize: "400% 400%",
-          border: "none",
+          color: "#072b29",
+          background: "linear-gradient(135deg, #4ecdc4, #8ae3dc)",
           fontWeight: "bold",
-          transition: "background-position 3s ease, transform 0.3s ease",
+          transition: "transform 0.22s ease, box-shadow 0.22s ease",
           "&:hover": {
-            backgroundPosition: "100% 0",
             transform: "scale(1.05)",
-            boxShadow: "0 0 10px #ee0979",
+            boxShadow: "0 8px 20px rgba(78,205,196,0.36)",
           },
         }}
       >
         Logout
       </Button>
-    </Stack>
+      </Stack>
     </Box>
   );
 };
@@ -97,14 +102,14 @@ const ProfileCard = ({ text, Icon, heading }) => (
     direction={"row"}
     alignItems={"center"}
     spacing={"1rem"}
-    color={"white"}
+    color={"#dbe6f7"}
     textAlign={"center"}
   >
     {Icon && Icon}
 
     <Stack>
       <Typography variant="body1">{text}</Typography>
-      <Typography color={"gray"} variant="caption">
+      <Typography color={"rgba(219,230,247,0.65)"} variant="caption">
         {heading}
       </Typography>
     </Stack>

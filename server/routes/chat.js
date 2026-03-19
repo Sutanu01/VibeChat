@@ -42,7 +42,7 @@ Router.put(
   removeMember
 );
 
-Router.delete("leave/:id", chatIdValidator(), validateHandler, leaveGroup);
+Router.delete("/leave/:id", chatIdValidator(), validateHandler, leaveGroup);
 
 Router.post(
   "/message",

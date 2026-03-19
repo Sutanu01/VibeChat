@@ -11,6 +11,7 @@ import {
   Backdrop,
   Badge,
   Box,
+  CircularProgress,
   IconButton,
   Toolbar,
   Tooltip,
@@ -58,12 +59,25 @@ const Header = ({handleProfileToggle}) => {
   return (
     <>
       <Box sx={{ flexGrow: 1 }} height={"4rem"}>
-        <AppBar position="static" sx={{ bgcolor: orange }}>
+        <AppBar
+          position="static"
+          sx={{
+            bgcolor: "rgba(12, 17, 27, 0.82)",
+            backdropFilter: "blur(12px)",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+          }}
+          elevation={0}
+        >
           <Toolbar>
             <Typography
               variant="h6"
-              sx={{ display: { xs: "none", sm: "block" },
-            fontFamily:'cursive',fontSize:'1.5rem',fontWeight:'bold' }}
+              sx={{
+                display: { xs: "none", sm: "block" },
+                fontSize: "1.3rem",
+                fontWeight: 700,
+                letterSpacing: "0.02em",
+                color: "#e6edf7",
+              }}
             >
               VibeChat
             </Typography>
@@ -105,17 +119,17 @@ const Header = ({handleProfileToggle}) => {
         </AppBar>
       </Box>
       {isSearch && (
-        <Suspense fallback={<Backdrop open />}>
+        <Suspense fallback={<Backdrop open><CircularProgress color="inherit" /></Backdrop>}>
           <SearchDialog />
         </Suspense>
       )}
       {isNewGroup && (
-        <Suspense fallback={<Backdrop open />}>
+        <Suspense fallback={<Backdrop open><CircularProgress color="inherit" /></Backdrop>}>
           <NewGroupDialog />
         </Suspense>
       )}
       {isNotification && (
-        <Suspense fallback={<Backdrop open />}>
+        <Suspense fallback={<Backdrop open><CircularProgress color="inherit" /></Backdrop>}>
           <NotificationDialog />
         </Suspense>
       )}
@@ -125,7 +139,18 @@ const Header = ({handleProfileToggle}) => {
 const IconBtn = ({ title, icon, onClick, value }) => {
   return (
     <Tooltip title={title}>
-      <IconButton color="inherit" onClick={onClick}>
+      <IconButton
+        color="inherit"
+        onClick={onClick}
+        sx={{
+          color: "#c7d4ea",
+          transition: "all 0.25s ease",
+          "&:hover": {
+            color: orange,
+            bgcolor: "rgba(255,255,255,0.07)",
+          },
+        }}
+      >
         {value ? <Badge badgeContent={value} color="error" >{icon}</Badge> : icon}
       </IconButton>
     </Tooltip>

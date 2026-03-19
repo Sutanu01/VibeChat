@@ -32,21 +32,29 @@ const ChatItem = ({
           damping: 10,
         }}
         style={{
-          border: "1px solid rgba(255, 255, 255, 0.1)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
           display: "flex",
           gap: "1rem",
           alignItems: "center",
           padding: "1rem",
-          background: sameSender ? midnightPurple : "unset",
-          color: sameSender ? "white" : "grey",
+          borderRadius: "0.9rem",
+          margin: "0.3rem 0.45rem",
+          background: sameSender ? midnightPurple : "rgba(255,255,255,0.02)",
+          color: sameSender ? "#eef5ff" : "#98a9c0",
           position: "relative",
+          backdropFilter: "blur(8px)",
+          boxShadow: sameSender
+            ? "0 10px 22px rgba(78, 205, 196, 0.18)"
+            : "none",
         }}
       >
         {avatar && <AvatarCard avatar={avatar} />}
         <Stack>
           <Typography sx={{ fontWeight: "600" }}>{name}</Typography>
           {newMessageAlert && (
-            <Typography>{newMessageAlert.count} New Message</Typography>
+            <Typography sx={{ fontSize: "0.8rem", color: "#d9b06f" }}>
+              {newMessageAlert.count} New Message
+            </Typography>
           )}
         </Stack>
         {isOnline && (

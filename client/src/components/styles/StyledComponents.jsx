@@ -16,10 +16,13 @@ const VisuallyHiddenInput = styled("input")({
 
 const Link = styled(LinkComponent)`
   text-decoration: none;
-  color: black;
+  color: #dce8fa;
   padding: 1rem;
+  border-radius: 0.9rem;
+  transition: background-color 0.25s ease, transform 0.25s ease;
   &:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.06);
+    transform: translateX(2px);
   }
 `;
 
@@ -30,7 +33,18 @@ const InputBox = styled("input")`
   outline: none;
   padding: 0 3rem;
   border-radius: 1.5rem;
-  background-color: ${greyColor};
+  color: #e6edf7;
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  &::placeholder {
+    color: rgba(230, 237, 247, 0.52);
+  }
+
+  &:focus {
+    border-color: rgba(78, 205, 196, 0.65);
+    box-shadow: 0 0 0 4px rgba(78, 205, 196, 0.2);
+  }
 `;
 
 const SearchField = styled("input")`
@@ -39,8 +53,14 @@ const SearchField = styled("input")`
   border: none;
   outline: none;
   border-radius: 1.5rem;
-  background-color: ${greyColor};
+  color: #e6edf7;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   font-size: 1.1rem;
+
+  &::placeholder {
+    color: rgba(230, 237, 247, 0.48);
+  }
 `;
 
 const CurveButton = styled("button")`
@@ -50,10 +70,13 @@ const CurveButton = styled("button")`
   outline: none;
   cursor: pointer;
   background-color: ${matBlack};
-  color: white;
+  color: #e6edf7;
   font-size: 1.1rem;
+  transition: transform 0.2s ease, filter 0.2s ease;
+
   &:hover {
-    background-color: rgba(0, 0, 0, 0.8);
+    filter: brightness(1.1);
+    transform: translateY(-1px);
   }
 `;
 

@@ -42,7 +42,20 @@ const addMemberValidator = () => [
 
 const removeMemberValidator = () => [
   body("chatId").notEmpty().withMessage("Please Enter Chat Id"),
-  body("userId").notEmpty().withMessage("Please Enter  userId"),
+  body("userId")
+    .optional({ nullable: true })
+    .notEmpty()
+    .withMessage("Please Enter userId"),
+  body("memberId")
+    .optional({ nullable: true })
+    .notEmpty()
+    .withMessage("Please Enter memberId"),
+  body().custom((value) => {
+    if (!value?.userId && !value?.memberId) {
+      throw new Error("Please provide userId or memberId");
+    }
+    return true;
+  }),
 ];
 
 const sendAttachmentsValidator = () => [

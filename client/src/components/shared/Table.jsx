@@ -20,6 +20,8 @@ const Table = ({ rows, columns, heading, rowHeight = 52 }) => {
           overflow: "hidden",
           height: "100%",
           boxShadow: "none",
+          bgcolor: "#121a28",
+          border: "1px solid rgba(255,255,255,0.08)",
         }}
       >
         <Typography
@@ -28,6 +30,7 @@ const Table = ({ rows, columns, heading, rowHeight = 52 }) => {
           sx={{
             margin: "2rem",
             textTransform: "uppercase",
+            color: "#e6edf7",
           }}
         >
           {heading}
@@ -41,9 +44,19 @@ const Table = ({ rows, columns, heading, rowHeight = 52 }) => {
           }}
           sx={{
             border: "none",
+            color: "#dce8fa",
+            "& .MuiDataGrid-cell": {
+              borderColor: "rgba(255,255,255,0.08)",
+            },
+            "& .MuiDataGrid-row": {
+              bgcolor: "rgba(255,255,255,0.01)",
+            },
+            "& .MuiDataGrid-footerContainer": {
+              borderTop: "1px solid rgba(255,255,255,0.08)",
+            },
             ".table-header": {
               bgcolor: matBlack,
-              color: "white",
+              color: "#e6edf7",
             },
           }}
         />

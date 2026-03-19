@@ -108,7 +108,8 @@ const AppLayout = (WrappedComponent) => {
           PaperProps={{
             sx: {
               width: { xs: "100%", sm: 400 },
-              bgcolor: "rgba(0,0,0,0.95)",
+              bgcolor: "#0f1725",
+              borderLeft: "1px solid rgba(255,255,255,0.08)",
               p: 3,
             },
           }}
@@ -116,9 +117,22 @@ const AppLayout = (WrappedComponent) => {
           <Profile user={user} />
         </Drawer>
         {isLoading ? (
-          <Skeleton />
+          <Skeleton
+            variant="rounded"
+            animation="wave"
+            sx={{ m: 2, width: "70vw", height: "90vh", bgcolor: "rgba(255,255,255,0.08)" }}
+          />
         ) : (
-          <Drawer open={isMobile} onClose={handleMobileClose}>
+          <Drawer
+            open={isMobile}
+            onClose={handleMobileClose}
+            PaperProps={{
+              sx: {
+                bgcolor: "#0f1725",
+                borderRight: "1px solid rgba(255,255,255,0.08)",
+              },
+            }}
+          >
             <Chatlist
               w="70vw"
               chats={data?.chats}

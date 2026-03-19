@@ -26,9 +26,11 @@ const Link = styled(LinkComponent)`
   text-decoration: none;
   border-radius: 2rem;
   padding: 1rem 2rem;
-  color: black;
+  color: #dce8fa;
+  transition: background-color 0.2s ease, transform 0.2s ease;
   &:hover {
-    color: rgba(0, 0, 0, 0.54);
+    background-color: rgba(255, 255, 255, 0.07);
+    transform: translateX(2px);
   }
 `;
 
@@ -64,7 +66,17 @@ const Sidebar = ({ w = "100%" }) => {
   };
 
   return (
-    <Stack width={w} direction={"column"} p={"3rem"} spacing={"3rem"}>
+    <Stack
+      width={w}
+      direction={"column"}
+      p={"3rem"}
+      spacing={"3rem"}
+      sx={{
+        height: "100%",
+        bgcolor: "#101a2d",
+        borderRight: "1px solid rgba(255,255,255,0.08)",
+      }}
+    >
       <Typography variant="h5" fontWeight={900}>
         VibeChat
       </Typography>
@@ -77,7 +89,7 @@ const Sidebar = ({ w = "100%" }) => {
             sx={
               location.pathname === tab.path && {
                 bgcolor: matBlack,
-                color: "white",
+                color: "#e6edf7",
                 ":hover": { color: "white" },
               }
             }
@@ -137,13 +149,21 @@ const AdminLayout = ({ children }) => {
         md={8}
         lg={9}
         sx={{
-          bgcolor: greyColor,
+          bgcolor: "#0f1725",
         }}
       >
         {children}
       </Grid>
 
-      <Drawer open={isMobile} onClose={handleClose}>
+      <Drawer
+        open={isMobile}
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            bgcolor: "#101a2d",
+          },
+        }}
+      >
         <Sidebar w={"90%"} />
       </Drawer>
     </Grid>
