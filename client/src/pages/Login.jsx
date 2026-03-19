@@ -2,6 +2,7 @@ import { useFileHandler, useInputValidation } from "6pp";
 import { CameraAlt as CameraAltIcon } from "@mui/icons-material";
 import {
   Avatar,
+  Box,
   Button,
   Container,
   IconButton,
@@ -31,6 +32,27 @@ const Login = () => {
   const password = useInputValidation("");
 
   const avatar = useFileHandler("single");
+  const fieldSx = {
+    backgroundColor: "rgba(255,255,255,0.05)",
+    borderRadius: "10px",
+    input: { color: "#e6edf7" },
+    "& .MuiInputLabel-root": { color: "#9db0cb" },
+    "& .MuiFilledInput-root": {
+      borderRadius: "10px",
+      border: "1px solid rgba(255,255,255,0.1)",
+      backgroundColor: "rgba(255,255,255,0.03)",
+      "&:hover": {
+        backgroundColor: "rgba(255,255,255,0.05)",
+      },
+      "&.Mui-focused": {
+        borderColor: "rgba(78,205,196,0.6)",
+        boxShadow: "0 0 0 3px rgba(78,205,196,0.18)",
+      },
+      "&:before, &:after": {
+        display: "none",
+      },
+    },
+  };
 
   const dispatch = useDispatch();
 
@@ -119,6 +141,11 @@ const Login = () => {
             boxShadow: "0 16px 40px rgba(0, 0, 0, 0.35)",
             border: "1px solid rgba(255,255,255,0.12)",
             width: "100%",
+            transition: "transform 220ms ease, box-shadow 220ms ease",
+            "&:hover": {
+              transform: "translateY(-2px)",
+              boxShadow: "0 20px 46px rgba(0,0,0,0.4)",
+            },
           }}
         >
           <Typography
@@ -130,6 +157,60 @@ const Login = () => {
           >
             {isLogin ? "Welcome Back 👋" : "Create an Account"}
           </Typography>
+
+          <Typography
+            variant="body2"
+            textAlign="center"
+            sx={{ color: "#9db0cb", mb: 2 }}
+          >
+            {isLogin
+              ? "Jump back into your conversations"
+              : "Set up your profile and start chatting"}
+          </Typography>
+
+          <Box
+            sx={{
+              p: "0.3rem",
+              mb: 2,
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "0.35rem",
+              bgcolor: "rgba(255,255,255,0.05)",
+              border: "1px solid rgba(255,255,255,0.08)",
+              borderRadius: "999px",
+            }}
+          >
+            <Button
+              onClick={() => setIsLogin(true)}
+              variant={isLogin ? "contained" : "text"}
+              sx={{
+                borderRadius: "999px",
+                color: isLogin ? "#032322" : "#c7d4ea",
+                bgcolor: isLogin ? "#4ecdc4" : "transparent",
+                "&:hover": {
+                  bgcolor: isLogin ? "#8ae3dc" : "rgba(255,255,255,0.06)",
+                },
+              }}
+              disabled={isLoading}
+            >
+              Login
+            </Button>
+            <Button
+              onClick={() => setIsLogin(false)}
+              variant={!isLogin ? "contained" : "text"}
+              sx={{
+                borderRadius: "999px",
+                color: !isLogin ? "#032322" : "#c7d4ea",
+                bgcolor: !isLogin ? "#4ecdc4" : "transparent",
+                "&:hover": {
+                  bgcolor: !isLogin ? "#8ae3dc" : "rgba(255,255,255,0.06)",
+                },
+              }}
+              disabled={isLoading}
+            >
+              Sign Up
+            </Button>
+          </Box>
 
           <form onSubmit={isLogin ? handleLogin : handleSignUp}>
             {!isLogin && (
@@ -185,12 +266,7 @@ const Login = () => {
                   value={name.value}
                   onChange={name.changeHandler}
                   required
-                  sx={{
-                    backgroundColor: "rgba(255,255,255,0.05)",
-                    borderRadius: "8px",
-                    input: { color: "#e6edf7" },
-                    "& .MuiInputLabel-root": { color: "#9db0cb" },
-                  }}
+                  sx={fieldSx}
                 />
 
                 <TextField
@@ -201,12 +277,7 @@ const Login = () => {
                   value={bio.value}
                   onChange={bio.changeHandler}
                   required
-                  sx={{
-                    backgroundColor: "rgba(255,255,255,0.05)",
-                    borderRadius: "8px",
-                    input: { color: "#e6edf7" },
-                    "& .MuiInputLabel-root": { color: "#9db0cb" },
-                  }}
+                  sx={fieldSx}
                 />
               </>
             )}
@@ -219,12 +290,7 @@ const Login = () => {
               value={username.value}
               onChange={username.changeHandler}
               required
-              sx={{
-                backgroundColor: "rgba(255,255,255,0.05)",
-                borderRadius: "8px",
-                input: { color: "#e6edf7" },
-                "& .MuiInputLabel-root": { color: "#9db0cb" },
-              }}
+              sx={fieldSx}
             />
             {username.error && (
               <Typography color="error" variant="caption">
@@ -241,12 +307,7 @@ const Login = () => {
               value={password.value}
               onChange={password.changeHandler}
               required
-              sx={{
-                backgroundColor: "rgba(255,255,255,0.05)",
-                borderRadius: "8px",
-                input: { color: "#e6edf7" },
-                "& .MuiInputLabel-root": { color: "#9db0cb" },
-              }}
+              sx={fieldSx}
             />
 
             <Button
@@ -258,6 +319,8 @@ const Login = () => {
                 fontWeight: "bold",
                 color: "#052928",
                 backgroundColor: "#4ecdc4",
+                borderRadius: "999px",
+                py: 1.1,
                 "&:hover": { backgroundColor: "#8ae3dc" },
               }}
               disabled={isLoading}
@@ -277,6 +340,7 @@ const Login = () => {
                 mt: 1,
                 color: "#4ecdc4",
                 borderColor: "#4ecdc4",
+                borderRadius: "999px",
                 "&:hover": {
                   borderColor: "#8ae3dc",
                   backgroundColor: "rgba(78, 205, 196, 0.12)",

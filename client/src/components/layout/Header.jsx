@@ -1,10 +1,11 @@
 import {
+  Add as AddIcon,
   Groups as GroupsIcon,
-  Settings as SettingsIcon,
   Menu as MenuIcon,
+  Settings as SettingsIcon,
   Notifications as NotificationIcon,
   AccountCircle as ProfileIcon,
-  PersonAdd as PersonAddIcon
+  PersonAdd as PersonAddIcon,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -13,11 +14,13 @@ import {
   Box,
   CircularProgress,
   IconButton,
+  Menu,
+  MenuItem,
   Toolbar,
   Tooltip,
   Typography,
 } from "@mui/material";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { orange } from "../../constants/color";
@@ -36,8 +39,11 @@ const Header = ({handleProfileToggle}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { isSearch, isNotification,isNewGroup } = useSelector((state) => state.misc);
+  const { isSearch, isNotification, isNewGroup } = useSelector(
+    (state) => state.misc
+  );
   const { notificationCount } = useSelector((state) => state.chat);
+  const [groupMenuAnchor, setGroupMenuAnchor] = useState(null);
 
 
   const handleMobile = () => dispatch(setIsMobile(true));
@@ -53,6 +59,19 @@ const Header = ({handleProfileToggle}) => {
 
   const navigateToGroup = () => {
     navigate("/groups");
+  };
+
+  const openGroupMenu = (event) => setGroupMenuAnchor(event.currentTarget);
+  const closeGroupMenu = () => setGroupMenuAnchor(null);
+
+  const handleNewGroupMenuClick = () => {
+    closeGroupMenu();
+    openNewGroup();
+  };
+
+  const handleManageGroupMenuClick = () => {
+    closeGroupMenu();
+    navigateToGroup();
   };
   
 
@@ -94,14 +113,9 @@ const Header = ({handleProfileToggle}) => {
                 onClick={openSearch}
               />
               <IconBtn
-                title="New Group"
+                title="Groups"
                 icon={<GroupsIcon />}
-                onClick={openNewGroup}
-              />
-              <IconBtn
-                title="Manage Groups"
-                icon={<SettingsIcon />}
-                onClick={navigateToGroup}
+                onClick={openGroupMenu}
               />
               <IconBtn
                 title="Notification"
@@ -117,6 +131,27 @@ const Header = ({handleProfileToggle}) => {
             </Box>
           </Toolbar>
         </AppBar>
+
+        <Menu
+          anchorEl={groupMenuAnchor}
+          open={Boolean(groupMenuAnchor)}
+          onClose={closeGroupMenu}
+          PaperProps={{
+            sx: {
+              bgcolor: "#0f1725",
+              color: "#dce8fa",
+              border: "1px solid rgba(255,255,255,0.08)",
+              minWidth: 190,
+            },
+          }}
+        >
+          <MenuItem onClick={handleNewGroupMenuClick}>
+            <AddIcon fontSize="small" sx={{ mr: 1.2 }} /> New Group
+          </MenuItem>
+          <MenuItem onClick={handleManageGroupMenuClick}>
+            <SettingsIcon fontSize="small" sx={{ mr: 1.2 }} /> Manage Groups
+          </MenuItem>
+        </Menu>
       </Box>
       {isSearch && (
         <Suspense fallback={<Backdrop open><CircularProgress color="inherit" /></Backdrop>}>

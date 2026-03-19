@@ -29,7 +29,7 @@ import { Link } from "../components/styles/StyledComponents";
 import { useAsyncMutation, useErrors } from "../hooks/hook.jsx";
 import {
   useChatDetailsQuery,
-  useDeleteChatMutation,
+  useLeaveGroupMutation,
   useMyGroupsQuery,
   useRemoveGroupMemberMutation,
   useRenameGroupMutation,
@@ -61,9 +61,7 @@ const Group = () => {
     useRemoveGroupMemberMutation
   );
 
-  const [deleteGroup, isLoadingDeleteGroup] = useAsyncMutation(
-    useDeleteChatMutation
-  );
+  const [leaveGroup] = useAsyncMutation(useLeaveGroupMutation);
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [GroupName, setGroupName] = useState("");
@@ -122,7 +120,7 @@ const Group = () => {
   };
 
   const LeaveGroupHandler = () => {
-    deleteGroup("Deleting Group...", chatId);
+    leaveGroup("Leaving Group...", chatId);
     closeConfirmLeave();
     navigate("/groups");
   };
@@ -309,7 +307,7 @@ const Group = () => {
               maxWidth={"45rem"}
               width={"100%"}
               boxSizing={"border-box"}
-              paddding={{
+              padding={{
                 sm: "1rem",
                 xs: "0rem",
                 md: "1rem 4rem",
