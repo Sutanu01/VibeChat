@@ -81,7 +81,9 @@ Check out the live version: [https://vibe-chat-xi.vercel.app](https://vibe-chat-
 
 ## 📸 Screenshots
 
-![VibeChat UI](./client/public/screenshot.png)
+![VibeChat Loading](./client/public/Screenshot1.png)
+![VibeChat Login](./client/public/Screenshot2.png)
+![VibeChat UI](./client/public/Screenshot3.png)
 
 ## 🤝 Contributing
 
